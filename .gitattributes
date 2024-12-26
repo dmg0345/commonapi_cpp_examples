@@ -1,0 +1,14 @@
+# Set the default behaviour.
+* text=auto
+
+# Files to explicitly be normalized and converted to native line endings on checkout.
+*.c text
+*.h text
+*.hpp text
+*.cpp text
+*.rst text
+
+# These files need a UNIX line ending for Fluxbox to load and work properly.
+.devcontainer/.other/fluxbox/* text eol=lf
+
+# Symbolic links, this must be last.

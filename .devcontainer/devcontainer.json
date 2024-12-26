@@ -1,0 +1,78 @@
+// For format details, see https://aka.ms/devcontainer.json.
+// This is the devcontainer JSON configuration file for the Visual Studio Code Dev Containers extension.
+{
+    // Path to the 'docker-compose' file to use relative to the location of this file.
+    // Using docker-compose allows to run one to multiple containers, depending on the application.
+    "dockerComposeFile": "compose.yaml",
+    // Name of the service defined in the 'docker-compose' file which will be used in Visual Studio Code.
+    "service": "vscode",
+    // Set the workspace folder to the mapped volume to the project root folder set in 'docker-compose' file.
+    "workspaceFolder": "/workspace",
+    // Set the name of the container in Visual Studio Code user interface, this is not the same as the container name.
+    "name": "commonapi_cpp_examples",
+    // Install additional features in the container.
+    "features": {
+        // Graphical User Interface to the container, for details:
+        //  - https://github.com/devcontainers/features/tree/main/src/desktop-lite
+        //  - Real VNC Viewer: https://www.realvnc.com/es/connect/download/viewer/
+        //  - To start: /usr/local/share/desktop-init.sh
+        "ghcr.io/devcontainers/features/desktop-lite:latest": {
+            "password": "vscode",
+            "webPort": 6080,
+            "vncPort": 5901
+        }
+    },
+    // Port forwarding for desktop-lite.
+    "forwardPorts": [6080, 5901],
+    // Apply customizations to tools in the container.
+    "customizations": {
+        "vscode": {
+            // Extensions to use.
+            "extensions": [
+                // Find extensions at: https://marketplace.visualstudio.com/vscode
+                // C/C++ related extensions.
+                "ms-vscode.cpptools@1.20.5",
+                "llvm-vs-code-extensions.vscode-clangd@0.1.28",
+                "ms-vscode.cpptools-themes@2.0.0",
+                "jeff-hykin.better-cpp-syntax@1.17.2",
+                "ms-vscode.cmake-tools@1.17.17",
+                "josetr.cmake-language-support-vscode@0.0.9",
+                "cschlosser.doxdocgen@1.4.0",
+
+                // Other.
+                "ms-vscode.powershell@2024.2.2",
+                "phil294.git-log--graph@0.1.15",
+                "github.vscode-github-actions@0.26.2", // Mainly used for validation and intellisense.
+                "trond-snekvik.simple-rst@1.5.4",
+                "swyddfa.esbonio@0.11.0", // Mainly used for intellisense, does not integrate well with Doxygen.
+                "tamasfe.even-better-toml@0.19.2",
+                "hediet.vscode-drawio@1.6.6",
+                "tomoki1207.pdf@1.2.2",
+                "ms-vscode.live-server@0.4.13"
+            ],
+
+            // Set the settings.
+            "settings": {
+                // Define 'pwsh' profile for Linux enviroments, and allow to start terminals in VSCode from it.
+                // Start it with the Python virtual environment already activated.
+                "terminal.integrated.profiles.linux": {
+                    "pwsh": {
+                        "path": "/bin/pwsh",
+                        "icon": "terminal-powershell",
+                        "args": ["-NoExit", "-Command", "& /usr/venvs/development/bin/Activate.ps1"]
+                    },
+                    "sh": {
+                        "path": "/bin/sh"
+                    },
+                    "bash": null,
+                    "JavaScript Debug Terminal": null
+                },
+                // Set the default profile to 'sh' in Linux enviroments, so that debug and launch work as normal.
+                "terminal.integrated.defaultProfile.linux": "sh",
+                "terminal.integrated.automationProfile.linux": {
+                    "path": "/bin/sh"
+                }
+            }
+        }
+    }
+}

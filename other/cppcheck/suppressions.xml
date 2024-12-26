@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!-- 
+    CppCheck suppressions file, use this to globally suppress directories, files, rules... and use 
+    inline suppressions where possible and convenient.
+-->
+<suppressions>
+    <!-- ################################### Suppressed Directories ############################# -->
+    <!-- Suppress every rule in third party directories and files. -->
+    <suppress>
+        <id>*</id>
+        <fileName>*src/third_party/*</fileName>
+    </suppress>
+    <!-- Suppress every rule in third party test harness. -->
+    <suppress>
+        <id>*</id>
+        <fileName>*tests/googletest/*</fileName>
+    </suppress>
+    <!-- Supress every rule in tests, as it will fail to parse some GoogleTest structures. -->
+    <suppress>
+        <id>*</id>
+        <fileName>*tests/tests/*</fileName>
+    </suppress>
+    <!-- ################################### Suppressed Files ################################### -->
+
+    <!-- ################################### Suppressed Rules ################################### -->
+    <!--
+    Supress missing system includes rule, it is not recommended to provide the paths to CppCheck:
+        - https://stackoverflow.com/questions/6986033/cppcheck-cant-find-include-files
+    -->
+    <suppress> 
+        <id>missingIncludeSystem</id>
+        <fileName>*</fileName>
+    </suppress>
+    <!-- Suppress unmatched suppression rule, which generates noise in many scenarios. -->
+    <suppress> 
+        <id>unmatchedSuppression</id>
+        <fileName>*</fileName>
+    </suppress>
+    <!-- Suppress variable scope rule. -->
+    <suppress>
+        <id>variableScope</id>
+        <fileName>*</fileName>
+    </suppress>
+    <!-- Suppress redundant initializations of variables, can conflict with other linters. -->
+    <suppress>
+        <id>redundantInitialization</id>
+        <fileName>*</fileName>
+    </suppress>
+    <!-- Suppress unused functions. -->
+    <suppress>
+        <id>unusedFunction</id>
+        <fileName>*</fileName>
+    </suppress>
+</suppressions>

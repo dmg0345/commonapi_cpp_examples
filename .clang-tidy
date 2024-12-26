@@ -1,0 +1,45 @@
+# Clang Tidy file, in YAML format, for reference regarding the checks and options available refer to:
+#   - clang-tidy-15 --help
+#   - https://releases.llvm.org/15.0.0/tools/clang/tools/extra/docs/clang-tidy/index.html
+#   - https://releases.llvm.org/15.0.0/tools/clang/tools/extra/docs/clang-tidy/checks/list.html
+# Note that certain checks can be time consuming, run with --enable-check-profile for profiling.
+
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-interfaces-global-init,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-goto,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  portability-*,
+  performance-*,
+  readability-*,
+  -readability-identifier-length,
+  -readability-avoid-const-params-in-decls,
+  -readability-magic-numbers,
+  -readability-redundant-declaration,
+  -readability-function-cognitive-complexity
+WarningsAsErrors: >
+  bugprone-*,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  cppcoreguidelines-*,
+  misc-*,
+  portability-*,
+  performance-*,
+  readability-*
+HeaderFilterRegex: >
+  src/*
+  lib/*
+  tests/tests/*
+InheritParentConfig: true
+CheckOptions:
+  cppcoreguidelines-macro-usage.CheckCapsOnly: true

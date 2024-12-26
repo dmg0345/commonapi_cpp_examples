@@ -1,0 +1,10 @@
+[begin] (  Application Menu  )
+    [exec] (File Manager) { nautilus ~ } <>
+    [exec] (PowerShell Terminal) { tilix -e pwsh} <>
+    [submenu] (System) {}
+        [exec] (Set Resolution) { tilix -t "Set Resolution" -e bash /usr/local/bin/set-resolution } <>
+        [exec] (Edit Application Menu) { mousepad ~/.fluxbox/menu } <>
+        [exec] (Xkill) {xkill} <>
+        [exec] (Xrefresh) {xrefresh} <>
+    [end]
+[end]
