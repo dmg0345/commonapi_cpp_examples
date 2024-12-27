@@ -116,3 +116,64 @@ RUN New-Item -ItemType Directory -Path "/root/.fluxbox/styles" -Force;          
     New-Item -ItemType File -Path "/root/.fluxbox/startup" -Force;                                                     \
     Copy-Item "/other/fluxbox/startup" "/root/.fluxbox/startup" -Force;                                                \
     Remove-Item "/other" -Force -Recurse;
+
+## CommonAPI C++ Tools #################################################################################################
+
+# Install the dependencies required to build the CommonAPI C++ tooling, for details refer to:
+#   - https://unix.stackexchange.com/a/749907
+#   - https://stackoverflow.com/a/19654699
+RUN wget "http://www.mirbsd.org/~tg/Debs/sources.txt/wtf-bookworm.sources" -O "./wtf-bookworm.sources";                \
+    Move-Item -Path "./wtf-bookworm.sources" -Destination "/etc/apt/sources.list.d/wtf-bookworm.sources" -Force;       \
+    apt-get --assume-yes update;                                                                                       \
+    apt-get --assume-yes --show-progress install maven=3.8.7-1 openjdk-8-jdk-headless openjdk-8-jre-headless;          \
+    apt-get --assume-yes clean;                                                                                        \
+    apt-get --assume-yes autoremove;                                                                                   \
+    Remove-Item "/etc/apt/sources.list.d/wtf-bookworm.sources";
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+
+# Build CommonAPI C++ Core, D-Bus and SOME/IP tools, for reference, refer to Github workflows and instructions at:
+#   - Core: https://github.com/COVESA/capicxx-core-tools/tree/3.2.15
+#   - D-Bus: https://github.com/COVESA/capicxx-dbus-tools/tree/3.2.15
+#   - SOME/IP: https://github.com/COVESA/capicxx-someip-tools/tree/3.2.15
+RUN                                                                                                                    \
+    ## Build CommonAPI C++ Core Tools ##################################################################################
+    git clone --depth 1 -b "3.2.15" "https://github.com/COVESA/capicxx-core-tools.git" "/core-tools";                  \
+    Push-Location "/core-tools";                                                                                       \
+    mvn -f "./org.genivi.commonapi.core.releng/pom.xml"                                                                \
+        -D "target.id=org.genivi.commonapi.core.target" clean verify;                                                  \
+    Pop-Location;                                                                                                      \
+    ## Build CommonAPI C++ D-Bus Tools #################################################################################
+    git clone --depth 1 -b "3.2.15" "https://github.com/COVESA/capicxx-dbus-tools.git" "/dbus-tools";                  \
+    Push-Location "/dbus-tools";                                                                                       \
+    mvn -f "./org.genivi.commonapi.dbus.releng/pom.xml"                                                                \
+        -D "COREPATH=/core-tools"                                                                                      \
+        -D "target.id=org.genivi.commonapi.dbus.target" clean verify;                                                  \
+    Pop-Location;                                                                                                      \
+    ## Build CommonAPI C++ SOME/IP Tools ###############################################################################
+    git clone --depth 1 -b "3.2.15" "https://github.com/COVESA/capicxx-someip-tools.git" "/someip-tools";              \
+    Push-Location "/someip-tools";                                                                                     \
+    mvn -f "./org.genivi.commonapi.someip.releng/pom.xml"                                                              \
+        -D "COREPATH=/core-tools"                                                                                      \
+        -D "target.id=org.genivi.commonapi.someip.target" clean verify;                                                \
+    Pop-Location;                                                                                                      \
+    ## Installation of all tools #######################################################################################
+    Expand-Archive -Force                                                                                              \
+        -Path "/core-tools/org.genivi.commonapi.core.cli.product/target/products/commonapi_core_generator.zip"         \
+        -DestinationPath "/usr/local/capicxx/core-tools";                                                              \
+    ln -sf '/usr/local/capicxx/core-tools/commonapi-core-generator-linux-x86_64'                                       \
+           '/usr/bin/commonapi-core-generator';                                                                        \
+    Expand-Archive -Force                                                                                              \
+        -Path "/dbus-tools/org.genivi.commonapi.dbus.cli.product/target/products/commonapi_dbus_generator.zip"         \
+        -DestinationPath "/usr/local/capicxx/dbus-tools";                                                              \
+    ln -sf '/usr/local/capicxx/dbus-tools/commonapi-dbus-generator-linux-x86_64'                                       \
+           '/usr/bin/commonapi-dbus-generator';                                                                        \
+    Expand-Archive -Force                                                                                              \
+        -Path "/someip-tools/org.genivi.commonapi.someip.cli.product/target/products/commonapi_someip_generator.zip"   \
+        -DestinationPath "/usr/local/capicxx/someip-tools";                                                            \
+    ln -sf '/usr/local/capicxx/someip-tools/commonapi-someip-generator-linux-x86_64'                                   \
+           '/usr/bin/commonapi-someip-generator';                                                                      \
+    ## Cleanup #########################################################################################################
+    Remove-Item "/core-tools" -Force -Recurse;                                                                         \
+    Remove-Item "/dbus-tools" -Force -Recurse;                                                                         \
+    Remove-Item "/someip-tools" -Force -Recurse;                                                                       \
+    Remove-Item "/root/.m2/repository" -Force -Recurse;

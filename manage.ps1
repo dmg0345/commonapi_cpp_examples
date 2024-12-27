@@ -137,7 +137,7 @@ if (-not (Test-Path "~/.ssh/known_hosts")) { New-Item -Path "~/.ssh/known_hosts"
 Set-Content -Path "~/.ssh/known_hosts" -Value "$(ssh-keyscan github.com)" -Force;
 
 # Clone repository in the workspace folder.
-git clone --recurse-submodules --branch master "git@github.com:dmg0345/commonapi_cpp_examples.git" ".";
+git clone --recurse-submodules --branch develop "git@github.com:dmg0345/commonapi_cpp_examples.git" ".";
 if ($LASTEXITCODE -ne 0) { throw "Failed to clone repository." }
 
 # Enable desktop lite to be able to configure GUIs.
