@@ -1,10 +1,10 @@
 /**
  ***********************************************************************************************************************
  * @file        utils.hpp
- * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
- * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
- * @version     ${PROJECT_VERSION}
- * @copyright   ${PROJECT_COPYRIGHT}
+ * @author      Diego Martínez García (dmg0345@gmail.com)
+ * @date        28-12-2024 15:28:40 (UTC)
+ * @version     0.0.1
+ * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
 
