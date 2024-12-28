@@ -3,9 +3,6 @@
 #   - https://docs.docker.com/compose/compose-file/
 #   - https://github.com/microsoft/vscode-dev-containers/tree/main/container-templates/docker-compose/.devcontainer
 
-## Other ###############################################################################################################
-version: '3.9'
-
 ## Services ############################################################################################################
 services:
   vscode:

@@ -52,7 +52,7 @@ RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                   
     apt-get --assume-yes autoremove;
 
 # Download the NET Runtime, necessary for the 'josetr.cmake-language-support-vscode' extension, for details refer to:
-# > https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
+#   - https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
 RUN wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" -O "package.deb";               \
     dpkg --install "./package.deb";                                                                                    \
     apt-get --assume-yes update;                                                                                       \
@@ -95,10 +95,6 @@ RUN Push-Location "/usr/venvs";                                                 
     deactivate;                                                                                                        \
     Pop-Location;
 
-# Make the active development environment the default Python instance, this is necessary for the ReStructured Text
-# extension that will otherwise use the system Python and it provides no possibility to change it.
-ENV PATH="/usr/venvs/development/bin:${PATH}"
-
 # Export the path where the Python virtual environment is located as an environment variable.
 ENV VIRTUAL_ENV_PATH="/usr/venvs/development"
 
@@ -131,7 +127,7 @@ RUN wget "http://www.mirbsd.org/~tg/Debs/sources.txt/wtf-bookworm.sources" -O ".
     Remove-Item "/etc/apt/sources.list.d/wtf-bookworm.sources";
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 
-# Build CommonAPI C++ Core, D-Bus and SOME/IP tools, for reference, refer to Github workflows and instructions at:
+# Build and install CommonAPI C++ Core, D-Bus and SOME/IP tools, for reference, refer to the following links:
 #   - Core: https://github.com/COVESA/capicxx-core-tools/tree/3.2.15
 #   - D-Bus: https://github.com/COVESA/capicxx-dbus-tools/tree/3.2.15
 #   - SOME/IP: https://github.com/COVESA/capicxx-someip-tools/tree/3.2.15
@@ -177,3 +173,95 @@ RUN                                                                             
     Remove-Item "/dbus-tools" -Force -Recurse;                                                                         \
     Remove-Item "/someip-tools" -Force -Recurse;                                                                       \
     Remove-Item "/root/.m2/repository" -Force -Recurse;
+ENV CAPICXX_CORE_TOOLS_DIR="/usr/local/capicxx/core-tools"
+ENV CAPICXX_DBUS_TOOLS_DIR="/usr/local/capicxx/dbus-tools"
+ENV CAPICXX_SOMEIP_TOOLS_DIR="/usr/local/capicxx/someip-tools"
+
+## CommonAPI C++ Runtimes ##############################################################################################
+
+# Install the dependencies required to build the CommonAPI C++ runtimes, for details refer to:
+#   - Automotive DLT package sources: https://github.com/COVESA/dlt-daemon
+#   - Automotive DLT debian package: https://packages.debian.org/bookworm/libdlt-dev
+RUN apt-get --assume-yes update;                                                                                       \
+    apt-get --assume-yes --show-progress install                                                                       \
+        libdlt2=2.18.8-6                                                                                               \
+        libdlt-dev=2.18.8-6                                                                                            \
+        libboost1.81-dev=1.81.0-5+deb12u1                                                                              \
+        libboost-system1.81-dev=1.81.0-5+deb12u1                                                                       \
+        libboost-thread1.81-dev=1.81.0-5+deb12u1                                                                       \
+        libboost-fileSystem1.81-dev=1.81.0-5+deb12u1                                                                   \
+        libsystemd-dev=252.31-1~deb12u1;                                                                               \
+    apt-get --assume-yes clean;                                                                                        \
+    apt-get --assume-yes autoremove;
+
+# Build and install CommonAPI C++ Core, D-Bus and SOME/IP runtimes, for reference, refer to the following links:
+#   - Core: https://github.com/COVESA/capicxx-core-tools/tree/3.2.15
+#   - D-Bus: https://github.com/COVESA/capicxx-dbus-tools/tree/3.2.15
+#   - SOME/IP: https://github.com/COVESA/capicxx-someip-runtime/tree/3.2.4
+#     - vsomeip: https://github.com/COVESA/vsomeip/tree/3.5.3
+RUN                                                                                                                    \
+    ## Build and install CommonAPI C++ Core Runtime ####################################################################
+    git clone --depth 1 -b "3.2.4" "https://github.com/COVESA/capicxx-core-runtime.git" "/core-runtime";               \
+    Push-Location "/core-runtime";                                                                                     \
+    cmake --fresh -S "." -B "./.cmake_build"                                                                           \
+        -DCMAKE_INSTALL_PREFIX:STRING="/usr/local/capicxx/core-runtime";                                               \
+    cmake --build "./.cmake_build" --target all;                                                                       \
+    cmake --build "./.cmake_build" --target install;                                                                   \
+    Pop-Location;                                                                                                      \
+    ## Build and install patched D-Bus Library and CommonAPI C++ D-Bus Runtime Library #################################
+    git clone --depth 1 -b "3.2.3-r1" "https://github.com/COVESA/capicxx-dbus-runtime.git" "/dbus-runtime";            \
+    wget "http://dbus.freedesktop.org/releases/dbus/dbus-1.13.6.tar.gz" -O "/dbus.tar.gz";                             \
+    New-Item -Path "/dbus" -ItemType Directory -Force | Out-Null; tar -xzf "/dbus.tar.gz" -C "/dbus";                  \
+    Push-Location "/dbus/dbus-1.13.6";                                                                                 \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-1-pc.patch";                                               \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-add-send-with-reply-set-notify.patch";                     \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-add-support-for-custom-marshalling.patch";                 \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-block-acquire-io-path-on-send.patch";                      \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-correct-dbus-connection-block-pending-call.patch";         \
+    patch -Np1 -i "/dbus-runtime/src/dbus-patches/capi-dbus-send-with-reply-and-block-delete-reply-on-error.patch";    \
+    cmake --fresh -S "./cmake" -B "./.cmake_build"                                                                     \
+        -DCMAKE_INSTALL_PREFIX:STRING="/usr/local/capicxx/dbus-patched"                                                \
+        -DDBUS_BUILD_TESTS:BOOL=OFF;                                                                                   \
+    cmake --build "./.cmake_build" --target all;                                                                       \
+    cmake --build "./.cmake_build" --target install;                                                                   \
+    Pop-Location;                                                                                                      \
+    Push-Location "/dbus-runtime";                                                                                     \
+    cmake --fresh -S "." -B "./.cmake_build"                                                                           \
+        -DCommonAPI_DIR:STRING="/usr/local/capicxx/core-runtime/lib/cmake/CommonAPI-3.2.4"                             \
+        -DDBus1_DIR:STRING="/usr/local/capicxx/dbus-patched/lib/cmake/DBus1"                                           \
+        -DUSE_INSTALLED_COMMONAPI:BOOL=OFF                                                                             \
+        -DUSE_INSTALLED_DBUS:BOOL=OFF                                                                                  \
+        -DCMAKE_INSTALL_PREFIX:STRING="/usr/local/capicxx/dbus-runtime";                                               \
+    cmake --build "./.cmake_build" --target all;                                                                       \
+    cmake --build "./.cmake_build" --target install;                                                                   \
+    Pop-Location;                                                                                                      \
+    ## Build and install vsomeip library and CommonAPI C++ SOME/IP Runtime #############################################
+    git clone --depth 1 -b "3.5.3" "https://github.com/COVESA/vsomeip.git" "/vsomeip";                                 \
+    Push-Location "/vsomeip";                                                                                          \
+    cmake --fresh -S "." -B "./.cmake_build"                                                                           \
+        -DCMAKE_INSTALL_PREFIX:STRING="/usr/local/capicxx/vsomeip";                                                    \
+    cmake --build "./.cmake_build" --target all;                                                                       \
+    cmake --build "./.cmake_build" --target install;                                                                   \
+    Pop-Location;                                                                                                      \
+    git clone --depth 1 -b "3.2.4" "https://github.com/COVESA/capicxx-someip-runtime.git" "/someip-runtime";           \
+    Push-Location "/someip-runtime";                                                                                   \
+    cmake --fresh -S "." -B "./.cmake_build"                                                                           \
+        -DCommonAPI_DIR:STRING="/usr/local/capicxx/core-runtime/lib/cmake/CommonAPI-3.2.4"                             \
+        -Dvsomeip3_DIR:STRING="/usr/local/capicxx/vsomeip/lib/cmake/vsomeip3"                                          \
+        -DUSE_INSTALLED_COMMONAPI:BOOL=OFF                                                                             \
+        -DCMAKE_INSTALL_PREFIX:STRING="/usr/local/capicxx/someip-runtime";                                             \
+    cmake --build "./.cmake_build" --target all;                                                                       \
+    cmake --build "./.cmake_build" --target install;                                                                   \
+    Pop-Location;                                                                                                      \
+    ## Cleanup #########################################################################################################
+    Remove-Item "/core-runtime" -Force -Recurse;                                                                       \
+    Remove-Item "/dbus-runtime" -Force -Recurse;                                                                       \
+    Remove-Item "/dbus.tar.gz" -Force -Recurse;                                                                        \
+    Remove-Item "/dbus" -Force -Recurse;                                                                               \
+    Remove-Item "/someip-runtime" -Force -Recurse;                                                                     \
+    Remove-Item "/vsomeip" -Force -Recurse;
+ENV CAPICXX_CORE_RUNTIME_DIR="/usr/local/capicxx/core-runtime"
+ENV CAPICXX_DBUS_DIR="/usr/local/capicxx/dbus-patched"
+ENV CAPICXX_DBUS_RUNTIME_DIR="/usr/local/capicxx/dbus-runtime"
+ENV CAPICXX_VSOMEIP_DIR="/usr/local/capicxx/vsomeip"
+ENV CAPICXX_SOMEIP_RUNTIME_DIR="/usr/local/capicxx/someip-runtime"

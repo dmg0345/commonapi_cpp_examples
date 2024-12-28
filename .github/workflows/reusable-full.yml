@@ -80,6 +80,9 @@ jobs:
           submodules: recursive
       - name: Build every target with CMake
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           # Define configuration and other related parameters.
           $cfgs = @{
             'Debug' = @{ 'preload' = 'debug' };
@@ -161,6 +164,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Run 'clang-tidy'
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -190,6 +196,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Run 'clang-format'
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -219,6 +228,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Run 'cppcheck'
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -256,6 +268,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Run 'doc8'
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -285,6 +300,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Run tests with 'ctest' and generate HTML test results and coverage reports
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -339,6 +357,9 @@ jobs:
           name: ${{ github.sha }}
       - name: Generate HTML documentation
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           Get-ChildItem -Path "." -Filter "*.repo.tar.gz" | ForEach-Object -Process `
           {
             # Untar repository and enter it.
@@ -366,6 +387,8 @@ jobs:
   deploy:
     needs: [tests, docs]
     runs-on: [ubuntu-22.04]
+    container:
+        image: ${{ inputs.docker_base_image }}
     if: ${{ inputs.deploy != 'none' }}
     steps:
       - name: Download HTML documentation
@@ -385,6 +408,9 @@ jobs:
           path: html_coverage_reports
       - name: Include HTML test reports and HTML coverage reports in documentation
         run: |
+          # Enter Python virtual environment.
+          & "$env:VIRTUAL_ENV_PATH/bin/Activate.ps1";
+
           # Create source paths to folders with reports.
           $srcCoverageReports = "./html_coverage_reports/Debug/$ENV:COVERAGE_HTML_FOLDER";
           $srcTestResultReports = "./html_test_results/Debug/$ENV:TESTS_HTML_FOLDER";
