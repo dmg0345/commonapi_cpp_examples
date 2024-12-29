@@ -1,6 +1,6 @@
 /**
  ***********************************************************************************************************************
- * @file        test_startup.cpp
+ * @file        test_lapp_cstartup.cpp
  * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
  * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @version     ${PROJECT_VERSION}
@@ -9,19 +9,23 @@
  */
 
 #include "test_utils/test_utils.hpp"
+#include "test_lapp_cstartup.hpp"
+
+#include "app/startup/startup.hpp"
+#include "utils/error/error.hpp"
+
+using namespace App::Startup;
+using namespace Utils::Error;
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 
-/**
- * @brief Namespace for the tests of 'startup' component.
- */
-namespace Tests::Example
+namespace Tests::App::Startup
 {
 
 /**
  * @brief Test suite, instantiated for every test.
  */
-class StartupTestFixture : public testing::Test
+class TestFixture : public testing::Test
 {
 protected:
     /**
@@ -38,9 +42,9 @@ protected:
 /**
  * @brief Runs an example test.
  */
-TEST_F(StartupTestFixture, First)
+TEST_F(TestFixture, First)
 {
-    ASSERT_TRUE(true);
+    ASSERT_EQ(::main(), ::Error::OK);
 }
 
 }

@@ -1,6 +1,6 @@
 /**
  ***********************************************************************************************************************
- * @file        test_utils.hpp
+ * @file        test_lapp_cstartup.hpp
  * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
  * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @version     ${PROJECT_VERSION}
@@ -8,27 +8,15 @@
  ***********************************************************************************************************************
  */
 
-#ifndef TEST_UTILS_HPP
-#define TEST_UTILS_HPP
-
-#include "priv/googletest.hpp"
+#ifndef TEST_LAPP_CSTARTUP_HPP
+#define TEST_LAPP_CSTARTUP_HPP
 
 /**
- * @brief Tests namespace.
- *
- * Root namespace for all the tests and testing utilities and definitions.
+ * @brief Namespace for the tests of 'startup' component of 'app' layer.
  */
-namespace Tests
+namespace Tests::App::Startup
 { }
 
-/**
- * @brief Test utilities namespace.
- *
- * Testing utilities for the tests.
- */
-namespace Tests::Utils
-{ }
-
-#endif /* TEST_UTILS_HPP */
+#endif /* TEST_LAPP_CSTARTUP_HPP */
 
 /******************************************************************************************************END OF FILE*****/

@@ -7,6 +7,18 @@ function(define_test_suite TEST_SUITE_NAME)
     # Link against GoogleTest and GoogleMock.
     target_link_libraries(${TEST_SUITE_NAME} PRIVATE gtest gmock)
 
+    # Link CommonAPI C++ runtimes and related libraries.
+    target_link_libraries(${TEST_SUITE_NAME} PRIVATE dbus-1 vsomeip3 CommonAPI CommonAPI-DBus CommonAPI-SomeIP)
+
+    # Add include directories to CommonAPI C++ runtimes and related libraries.
+    target_include_directories(${TEST_SUITE_NAME} PRIVATE
+        ${DBUS1_INTERFACE_INCLUDE_DIRS}
+        ${VSOMEIP3_INTERFACE_INCLUDE_DIRS}
+        ${COMMONAPI_INTERFACE_INCLUDE_DIRS}
+        ${COMMONAPI_DBUS_INTERFACE_INCLUDE_DIRS}
+        ${COMMONAPI_SOMEIP_INTERFACE_INCLUDE_DIRS}
+    )
+
     # Add additional test utilities.
     target_sources(${TEST_SUITE_NAME} PRIVATE
         "${PROJECT_ROOT_DIR}/tests/tests/.test_utils/test_utils.cpp"
@@ -48,8 +60,8 @@ function(define_test_suite TEST_SUITE_NAME)
     target_compile_definitions(${TEST_SUITE_NAME} PRIVATE "DISABLE_MAIN")
 
     # Add generic components.
-    target_sources(${TEST_SUITE_NAME} PRIVATE ${SOURCES_UTILS})
-    target_include_directories(${TEST_SUITE_NAME} PRIVATE ${INCLUDE_DIRS_UTILS})
+    target_sources(${TEST_SUITE_NAME} PRIVATE ${SOURCES_LUTILS})
+    target_include_directories(${TEST_SUITE_NAME} PRIVATE ${INCLUDE_DIRS_LUTILS})
 
     # Add test suite to CTest.
     add_test(NAME ${TEST_SUITE_NAME} COMMAND ${TEST_SUITE_NAME})

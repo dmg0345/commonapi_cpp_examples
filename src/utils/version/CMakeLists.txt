@@ -1,15 +1,15 @@
 ## Sources #############################################################################################################
-# Collect sources and add them to target.
-set(SOURCES_UTILS_VERSION
+# Collect source files of component and add them to relevant targets.
+set(SOURCES_LUTILS_CVERSION
     ""
     CACHE INTERNAL ""
 )
-target_sources(app PRIVATE ${SOURCES_UTILS_VERSION})
+foreach_target(TARGETS capicpp_client capicpp_server FN target_sources PRIVATE ${SOURCES_LUTILS_CVERSION})
 
 ## Includes ############################################################################################################
-# Collect include directories and add them to target.
-set(INCLUDE_DIRS_UTILS_VERSION
+# Collect include directories of component and add them to relevant targets.
+set(INCLUDE_DIRS_LUTILS_CVERSION
     "${CMAKE_CURRENT_SOURCE_DIR}/inc"
     CACHE INTERNAL ""
 )
-target_include_directories(app PRIVATE ${INCLUDE_DIRS_UTILS_VERSION})
+foreach_target(TARGETS capicpp_client capicpp_server FN target_include_directories PRIVATE ${INCLUDE_DIRS_LUTILS_CVERSION})
