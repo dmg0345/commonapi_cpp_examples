@@ -11,6 +11,8 @@
 #include "app/startup/startup.hpp"
 #include "utils/error/error.hpp"
 
+#include <CommonAPI/CommonAPI.hpp>
+
 using Utils::Error::Error;
 
 namespace App::Startup
@@ -18,6 +20,14 @@ namespace App::Startup
 
 Error main(void)
 {
+#if (defined(CAPICPP_CLIENT) && !defined(CAPICPP_SERVER))
+
+#elif (!defined(CAPICPP_CLIENT) && defined(CAPICPP_SERVER))
+
+#else
+#error "Neither 'CAPICPP_CLIENT' or 'CAPICPP_SERVER' are defined, or both are defined."
+#endif
+
     return Error::OK;
 }
 

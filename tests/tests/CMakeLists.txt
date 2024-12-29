@@ -1,2 +1,2 @@
-## Tests for 'startup' component #######################################################################################
-add_subdirectory("startup")
+## Tests for 'startup' component in 'app' layer ########################################################################
+add_subdirectory("lapp_cstartup")

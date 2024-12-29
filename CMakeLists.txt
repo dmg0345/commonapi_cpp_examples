@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION 3.25)
 
 # Enable or disable verbosity, useful for debugging. Use it as a cache variable so it applies to all files.
 option(CMAKE_VERBOSE_MAKEFILE "Set to ON to enable verbosity, defaults to 'OFF'." OFF)
+# Print where all the 'find_*' kind of CMake APIs find the relevant files and folders, useful for debugging.
+option(CMAKE_FIND_DEBUG_MODE "Set to ON to enable debug CMake find APIs, defaults to 'OFF'." OFF)
 # Allow the generation of 'compile_commands.json' for debugging purposes and intellisense.
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Set to ON to generate compilation database, defaults to 'OFF'." ON)
 
@@ -38,6 +40,20 @@ include(CTest)
 
 # Set the project root the current working directory at this point, that is, the root of the repository.
 set(PROJECT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
+# Load for all the Common API C++ runtimes and libraries from the locations specified in the environment variables.
+find_package(DBus1 REQUIRED CONFIG PATHS "$ENV{CAPICPP_DBUS_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(vsomeip3 REQUIRED CONFIG PATHS "$ENV{CAPICPP_VSOMEIP_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI REQUIRED CONFIG PATHS "$ENV{CAPICPP_CORE_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI-DBus REQUIRED CONFIG PATHS "$ENV{CAPICPP_DBUS_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI-SomeIP REQUIRED CONFIG PATHS "$ENV{CAPICPP_SOMEIP_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
+
+# Extract relevant information from the targets.
+get_target_property(DBUS1_INTERFACE_INCLUDE_DIRS dbus-1 INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(VSOMEIP3_INTERFACE_INCLUDE_DIRS vsomeip3 INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(COMMONAPI_INTERFACE_INCLUDE_DIRS CommonAPI INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(COMMONAPI_DBUS_INTERFACE_INCLUDE_DIRS CommonAPI-DBus INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(COMMONAPI_SOMEIP_INTERFACE_INCLUDE_DIRS CommonAPI-SomeIP INTERFACE_INCLUDE_DIRECTORIES)
 
 ## Project Options #####################################################################################################
 # The type of build to perform with the libraries.
@@ -77,6 +93,16 @@ message(STATUS "CFG_TAG: '${CFG_TAG}'")
 message(STATUS "CFG_TESTS_ENABLE_COVERAGE: '${CFG_TESTS_ENABLE_COVERAGE}'")
 message(STATUS "CFG_TESTS_ENABLE_SANITIZERS: '${CFG_TESTS_ENABLE_SANITIZERS}'")
 message(STATUS "CFG_CI: '${CFG_CI}'")
+message(STATUS "CAPICPP_DBUS_DIR: '$ENV{CAPICPP_DBUS_DIR}'")
+message(STATUS "---> DBUS1_INTERFACE_INCLUDE_DIRS: '${DBUS1_INTERFACE_INCLUDE_DIRS}'")
+message(STATUS "CAPICPP_VSOMEIP_DIR: '$ENV{CAPICPP_VSOMEIP_DIR}'")
+message(STATUS "---> VSOMEIP3_INTERFACE_INCLUDE_DIRS: '${VSOMEIP3_INTERFACE_INCLUDE_DIRS}'")
+message(STATUS "CAPICPP_CORE_RUNTIME_DIR: '$ENV{CAPICPP_CORE_RUNTIME_DIR}'")
+message(STATUS "---> COMMONAPI_INTERFACE_INCLUDE_DIRS: '${COMMONAPI_INTERFACE_INCLUDE_DIRS}'")
+message(STATUS "CAPICPP_DBUS_RUNTIME_DIR: '$ENV{CAPICPP_DBUS_RUNTIME_DIR}'")
+message(STATUS "---> COMMONAPI_DBUS_INTERFACE_INCLUDE_DIRS: '${COMMONAPI_DBUS_INTERFACE_INCLUDE_DIRS}'")
+message(STATUS "CAPICPP_SOMEIP_RUNTIME_DIR: '$ENV{CAPICPP_SOMEIP_RUNTIME_DIR}'")
+message(STATUS "---> COMMONAPI_SOMEIP_INTERFACE_INCLUDE_DIRS: '${COMMONAPI_SOMEIP_INTERFACE_INCLUDE_DIRS}'")
 message(STATUS "BUILD_TESTING: '${BUILD_TESTING}'")
 message(STATUS "CMAKE_VERBOSE_MAKEFILE: '${CMAKE_VERBOSE_MAKEFILE}'")
 message(STATUS "#########################################################")

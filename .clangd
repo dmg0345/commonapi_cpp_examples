@@ -3,8 +3,14 @@
 #   - https://clangd.llvm.org/config
 # For clang-tidy and clang-format related operations within clangd, the .clang-tidy and .clang-format files are used.
 
+
 CompileFlags:
-  Add: [-D_CLANGD=1]
+  Add: [
+    -D_CLANGD=1,
+#    -DCAPICPP_CLIENT, # Comment for Server intellisense, uncomment for Client intellisense and restart language server.
+    -DCAPICPP_SERVER # Comment for Client intellisense, uncomment for Server intellisense and restart language server.
+  ]
+  Remove: [-DCAPICPP_CLIENT, -DCAPICPP_SERVER]
   CompilationDatabase: .cmake_build
 Diagnostics:
   Suppress: [

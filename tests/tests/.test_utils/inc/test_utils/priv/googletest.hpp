@@ -15,6 +15,11 @@
 #include <gmock/gmock.h>
 #include <iostream>
 
+/**
+ * @brief GoogleTest test utilities namespace.
+ *
+ * Utilities related to GoogleTest and GoogleMock for testing.
+ */
 namespace Tests::Utils::GoogleTest
 {
 
