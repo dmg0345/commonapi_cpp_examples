@@ -6,10 +6,10 @@
 file(GLOB_RECURSE PROJECT_SOURCE_FILES
     "${PROJECT_ROOT_DIR}/src/*.cpp"
     "${PROJECT_ROOT_DIR}/src/*.hpp"
+    "${PROJECT_ROOT_DIR}/src/*.fidl"
+    "${PROJECT_ROOT_DIR}/src/*.fdepl"
     "${PROJECT_ROOT_DIR}/tests/tests/*.cpp"
     "${PROJECT_ROOT_DIR}/tests/tests/*.hpp"
-    "${PROJECT_ROOT_DIR}/third_party/*.fidl"
-    "${PROJECT_ROOT_DIR}/third_party/*.fdepl"
 )
 
 # Check if tagging filenames only.

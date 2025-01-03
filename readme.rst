@@ -35,9 +35,11 @@ Create a release
 
 To generate a release follow the steps below:
 
-1. Create a ``release`` branch from ``develop`` branch, e.g. ``release/X.Y.Z``.
-2. Update version in *conf.py* file and in *version.cmake* file.
-3. Run *cmake* with ``-DCFG_TAG:BOOL=ON`` to tag all the relevant files.
-4. Create pull request from ``release`` branch to ``master`` with the changes with title *Release X.Y.Z*.
-5. When merged in ``master`` create release and tag from *Github*, review production workflow passes for deployment.
-6. Delete the ``release/X.Y.Z`` branch.
+1. Create a ``release`` branch from ``develop`` branch named ``release/X.Y.Z``.
+2. Update version in *conf.py* file and in *version.cmake* file, commit change to ``release/X.Y.Z`` branch.
+3. Create branch called ``release/X.Y.Z_tag`` from ``release/X.Y.Z``
+4. On branch ``release/X.Y.Z_tag``, run *cmake* with ``-DCFG_TAG:BOOL=ON`` to tag all files, and commit the changes.
+5. Create pull request from ``release/X.Y.Z_tag`` branch to ``master`` branch, with the title *Release X.Y.Z*.
+6. Create pull request from ``release/X.Y.Z`` branch to ``develop`` branch, with the title *Release X.Y.Z*.
+7. When merged in ``master`` create release and tag from *Github* from merged commit, review production workflow passes.
+8. Delete the ``release/X.Y.Z_tag`` branch, keep the ``release/X.Y.Z`` branch, which holds the commit hash tagged.

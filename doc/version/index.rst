@@ -15,3 +15,5 @@ Version
 .. doxygenvariable:: Utils::Version::DESCRIPTION
 
 .. doxygenvariable:: Utils::Version::VERSION
+
+.. doxygenvariable:: Utils::Version::COMMIT_HASH
