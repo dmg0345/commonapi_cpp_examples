@@ -17,10 +17,14 @@ param (
     #    'test_report': Container command, runs 'junit2html' generating a HTML test report from the last test execution.
     #    'coverage': Container command, runs 'fastcov' and 'lcov' project wide.
     #    'docs': Container command, runs 'doxygen' and 'sphinx' project wide.
+    #    'compilation-databases': Container command, adjusts the compilation databases for client and server.
+    #    'commonapi-gen': Container command, generate Common API C++ code from the relevant '.fidl' and '.fdepl' files.
+    #    'commonapi-up': Container command, brings up the required resources for communication over Common API bindings.
+    #    'commonapi-down': Container command, shuts down required resources for communication over Common API bindings.
     [Parameter(Mandatory = $true)]
     [ValidateSet(
         "load", "clean", "build", "run", "clang-format", "clang-tidy", "cppcheck", "doc8", "test_report",
-        "coverage", "docs"
+        "coverage", "docs", "compilation-databases", "commonapi-gen", "commonapi-up", "commonapi-down"
     )]
     [String]
     $Command
@@ -47,12 +51,15 @@ Import-Module "$PSScriptRoot/other/powershell_scripts/modules/devcontainers.psm1
 Import-Module "$PSScriptRoot/other/powershell_scripts/modules/linters.psm1";
 Import-Module "$PSScriptRoot/other/powershell_scripts/modules/tests.psm1";
 Import-Module "$PSScriptRoot/other/powershell_scripts/modules/documentation.psm1";
+Import-Module "$PSScriptRoot/other/powershell_scripts/modules/commonapi.psm1";
 
 # [Declarations] #######################################################################################################
 # Path to 'devcontainer.json' file.
 $DEVCONTAINER_FILE = ".devcontainer/devcontainer.json"; 
 # Project name for the Docker compose project.
 $DEVCONTAINER_PROJECT_NAME = "commonapi_cpp_examples";
+# Common API C++ lock file.
+$DEVCONTAINER_COMMON_API_LOCK_FILE = ".commonapi.lock";
 
 # [Internal Functions] #################################################################################################
 
@@ -156,7 +163,8 @@ elseif ($Command -eq "clang-format")
 {
     # Build list of files and folders.
     $paths = @(
-        "src",
+        "src/app",
+        "src/utils",
         "tests/tests"
     );
 
@@ -166,7 +174,8 @@ elseif ($Command -eq "clang-tidy")
 {
     # Build wildcard expressions.
     $fileFilters = @(
-        "src/*",
+        "src/app/*",
+        "src/utils/*",
         "tests/tests/*"
     );
 
@@ -177,7 +186,8 @@ elseif ($Command -eq "cppcheck")
 {
     # Build wildcard expressions.
     $fileFilters = @(
-        "src/*",
+        "src/app/*",
+        "src/utils/*",
         "tests/tests/*"
     );
 
@@ -206,7 +216,8 @@ elseif ($Command -eq "coverage")
 {
     # Substrings of files that will be included in the report.
     $inputs = @(
-        "src"
+        "src/app",
+        "src/utils"
     );
 
     Start-FastCov -FastCovExe "fastcov" -LCovGenHTMLExe "genhtml" -Include $inputs `
@@ -216,6 +227,89 @@ elseif ($Command -eq "docs")
 {
     Start-DoxygenSphinx -DoxygenExe "doxygen" -SphinxBuildExe "sphinx-build" -ConfigFolder "doc" `
         -CMakeBuildDir ".cmake_build" -HTMLOutput "doc/.output";
+}
+elseif ($Command -eq "compilation-databases")
+{
+    $compilationDatabase = ".cmake_build/compile_commands.json";
+
+    # Create compilation database for client.
+    Remove-FromCompilationDatabase -InputCompileCommandsJSON "$($compilationDatabase)" `
+        -OutputCompileCommandsJSON ".cmake_build/client/compile_commands.json" `
+        -Regex '-DCAPICPP_SERVER' | Out-Null;
+    # Create compilation database for server.
+    Remove-FromCompilationDatabase -InputCompileCommandsJSON "$($compilationDatabase)" `
+        -OutputCompileCommandsJSON ".cmake_build/server/compile_commands.json" `
+        -Regex '-DCAPICPP_CLIENT' | Out-Null;
+}
+elseif ($Command -eq "commonapi-gen")
+{
+    # List of folders with Franca IDL and Franca deployment files.
+    $inputs = @(
+        @{
+            fidlDir      = "src/third_party/capi_gen/fidl";
+            coreDir      = "src/third_party/capi_gen/fidl/gen";
+            dbusDir      = "src/third_party/capi_gen/dbus/gen";
+            someipDir    = "src/third_party/capi_gen/someip/gen";
+            clearOutputs = $true;
+        }
+    );
+
+    New-CommonAPIGeneration -Inputs $inputs `
+        -CoreGenerator "commonapi-core-generator" `
+        -DBusGenerator "commonapi-dbus-generator" -SomeIPGenerator "commonapi-someip-generator";
+}
+elseif ($Command -eq "commonapi-up")
+{
+    # Ensure lock file doesn't exist before attempting to create resources.
+    if (-not (Test-Path "$($DEVCONTAINER_COMMON_API_LOCK_FILE)"))
+    {
+        $jsonLock = [ordered]@{};
+
+        # Create daemon for DBus and fetch PID from the standard output.
+        Write-Log "Creating DBus session daemon...";
+        $dbusDaemonPID = & 'dbus-daemon' --session --print-pid --address 'unix:path=/tmp/dbus-commonapi' --fork;
+        if ($LASTEXITCODE -ne 0) { throw "Failed to create dbus daemon with error '$($LASTEXITCODE)'." }
+        $jsonLock.Add("dbusDaemonPid", $dbusDaemonPID);
+
+        # Print active processes to standard output.
+        & 'ps' -Af | grep 'dbus-commonapi';
+        if ($LASTEXITCODE -ne 0) { throw "Failed to retrieve active daemons."; }
+
+        # Save contents to lock file.
+        (ConvertTo-Json $jsonLock) | Set-Content -Path "$($DEVCONTAINER_COMMON_API_LOCK_FILE)" -Force -Encoding utf8;
+
+        Write-Log "Common API C++ resources are now active." "Success";
+    }
+    else
+    {
+        Write-Log "Common API lock file exists, run 'commonapi-down' first..." "Error";
+    }
+}
+elseif ($Command -eq "commonapi-down")
+{
+    # Ensure lock file exists before attempting to destroy resources.
+    if (Test-Path "$($DEVCONTAINER_COMMON_API_LOCK_FILE)")
+    {
+        $jsonLock = (Get-Content -Path "$($DEVCONTAINER_COMMON_API_LOCK_FILE)" -Encoding utf8 | ConvertFrom-Json);
+
+        # Create daemon for DBus and fetch PID from the standard output.
+        Write-Log "Terminating active Common API C++ DBus daemon...";
+        & 'kill' -SIGTERM "$($jsonLock.dbusDaemonPid)";
+        if ($LASTEXITCODE -ne 0) { throw "Failed to terminate dbus daemon with error '$($LASTEXITCODE)'." }
+
+        # Print active processes to standard output.
+        & 'ps' -Af | grep 'dbus-commonapi'; 
+        if ($LASTEXITCODE -ne 0) { throw "Failed to retrieve active daemons."; }
+
+        # Remove lock file.
+        Remove-Item -Path "$($DEVCONTAINER_COMMON_API_LOCK_FILE)" -Force;
+
+        Write-Log "Common API C++ resources are now inactive." "Success";
+    }
+    else
+    {
+        Write-Log "Common API lock file does not exist, run 'commonapi-up' first..." "Error";
+    }
 }
 else
 {

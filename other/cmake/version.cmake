@@ -68,8 +68,8 @@ set(VERSION_INFO "/**
 // clang-format off
 // THIS FILE IS AUTO-GENERATED, IF MODIFIED, CHANGES WILL BE OVERWRITTEN.
 
-#ifndef UTILS_VERSION_INFO_HPP
-#define UTILS_VERSION_INFO_HPP
+#ifndef LUTILS_CVERSION_INFO_HPP
+#define LUTILS_CVERSION_INFO_HPP
 
 namespace Utils::Version
 {
@@ -151,7 +151,7 @@ constexpr const char * const BUILD_TIMESTAMP_UTC = \"${PROJECT_BUILD_TIMESTAMP_U
 
 }
 
-#endif /* UTILS_VERSION_INFO_HPP */
+#endif /* LUTILS_CVERSION_INFO_HPP */
 
 /******************************************************************************************************END OF FILE*****/")
 

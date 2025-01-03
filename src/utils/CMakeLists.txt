@@ -4,6 +4,9 @@ add_subdirectory("error")
 ## Add 'version' component #############################################################################################
 add_subdirectory("version")
 
+## Add 'capi' component ################################################################################################
+add_subdirectory("capi")
+
 ## Sources #############################################################################################################
 # Collect source files of component and add them to relevant targets.
 set(SOURCES_LUTILS_CUTILS
@@ -26,6 +29,7 @@ set(SOURCES_LUTILS
     ${SOURCES_LUTILS_CUTILS}
     ${SOURCES_LUTILS_CERROR}
     ${SOURCES_LUTILS_CVERSION}
+    ${SOURCES_LUTILS_CCAPI}
     CACHE INTERNAL ""
 )
 
@@ -34,5 +38,6 @@ set(INCLUDE_DIRS_LUTILS
     ${INCLUDE_DIRS_LUTILS_CUTILS}
     ${INCLUDE_DIRS_LUTILS_CERROR}
     ${INCLUDE_DIRS_LUTILS_CVERSION}
+    ${INCLUDE_DIRS_LUTILS_CCAPI}
     CACHE INTERNAL ""
 )

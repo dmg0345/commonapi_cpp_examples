@@ -8,8 +8,8 @@
  ***********************************************************************************************************************
  */
 
-#ifndef APP_STARTUP_HPP
-#define APP_STARTUP_HPP
+#ifndef LAPP_CSTARTUP_HPP
+#define LAPP_CSTARTUP_HPP
 
 #include "utils/error/error.hpp"
 
@@ -40,6 +40,6 @@ Utils::Error::Error main(void);
 int main(void);
 #endif
 
-#endif /* APP_STARTUP_HPP */
+#endif /* LAPP_CSTARTUP_HPP */
 
 /******************************************************************************************************END OF FILE*****/

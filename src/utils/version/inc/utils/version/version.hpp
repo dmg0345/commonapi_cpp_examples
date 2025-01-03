@@ -9,8 +9,8 @@
  */
 
 /* Define to prevent recursive inclusion -----------------------------------------------------------------------------*/
-#ifndef UTILS_VERSION_HPP
-#define UTILS_VERSION_HPP
+#ifndef LUTILS_CVERSION_HPP
+#define LUTILS_CVERSION_HPP
 
 #include "priv/info.hpp"
 
@@ -22,6 +22,6 @@
 namespace Utils::Version
 { }
 
-#endif /* UTILS_VERSION_HPP */
+#endif /* LUTILS_CVERSION_HPP */
 
 /******************************************************************************************************END OF FILE*****/

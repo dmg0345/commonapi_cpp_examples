@@ -40,6 +40,7 @@
                 "cschlosser.doxdocgen@1.4.0",
 
                 // Other.
+                "weijh.franca-idl@0.0.6",
                 "ms-vscode.powershell@2024.2.2",
                 "phil294.git-log--graph@0.1.15",
                 "github.vscode-github-actions@0.26.2", // Mainly used for validation and intellisense.

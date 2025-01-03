@@ -1,6 +1,6 @@
 /**
  ***********************************************************************************************************************
- * @file        test_lapp_cstartup.hpp
+ * @file        capi.hpp
  * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
  * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @version     ${PROJECT_VERSION}
@@ -8,15 +8,18 @@
  ***********************************************************************************************************************
  */
 
-#ifndef TEST_LAPP_CSTARTUP_HPP
-#define TEST_LAPP_CSTARTUP_HPP
+#ifndef LUTILS_CCAPI_HPP
+#define LUTILS_CCAPI_HPP
 
 /**
- * @brief Namespace for the tests of 'startup' component of 'app' layer.
+ * @brief Common API namespace.
+ * @rst
+ * TODO: Handles all the details and underlying functionality of the Common API code generation.
+ * @endrst
  */
-namespace Tests::App::Startup
+namespace Utils::Capi
 { }
 
-#endif /* TEST_LAPP_CSTARTUP_HPP */
+#endif /* LUTILS_CCAPI_HPP */
 
 /******************************************************************************************************END OF FILE*****/

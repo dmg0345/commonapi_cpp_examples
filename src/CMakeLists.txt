@@ -1,9 +1,12 @@
-# Create client and server targets, and build them in the next steps.
+# Create client and server executable targets.
 add_executable(capicpp_client)
 add_executable(capicpp_server)
 
-# Install target configuration.
+# Install configuration for executable targets.
 install(TARGETS capicpp_client capicpp_server RUNTIME DESTINATION "${CMAKE_INSTALL_RUNTIMEDIR}")
+
+## Include third party #################################################################################################
+add_subdirectory("third_party")
 
 ## Include utils #######################################################################################################
 add_subdirectory("utils")

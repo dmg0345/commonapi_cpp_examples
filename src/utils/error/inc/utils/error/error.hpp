@@ -8,8 +8,8 @@
  ***********************************************************************************************************************
  */
 
-#ifndef UTILS_ERROR_HPP
-#define UTILS_ERROR_HPP
+#ifndef LUTILS_CERROR_HPP
+#define LUTILS_CERROR_HPP
 
 #include <cstdint>
 
@@ -48,7 +48,11 @@ enum class CID : uint32_t
 {
     None = 0U, /**< No component identifier. */
     Error, /**< Error component identifier. */
-    Version /**< Version component identifier. */
+    Version, /**< Version component identifier. */
+    CommonAPI, /**< Common API, also known as 'capi', component identifier. */
+    Startup, /**< Startup component identifier. */
+    Client, /**< Client component identifier. */
+    Server /**< Server component identifier. */
 };
 
 /**
@@ -181,6 +185,6 @@ enum class Error : uint32_t
 
 }
 
-#endif /* UTILS_ERROR_HPP */
+#endif /* LUTILS_CERROR_HPP */
 
 /******************************************************************************************************END OF FILE*****/

@@ -1,0 +1,45 @@
+/**
+ ***********************************************************************************************************************
+ * @file        app.fidl
+ * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
+ * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
+ * @version     ${PROJECT_VERSION}
+ * @copyright   ${PROJECT_COPYRIGHT}
+ * @verbatim
+ * Common API C++ DBus Franca Deployment file, for details about this file refer to:
+ *   - CommonAPICppSpecification.
+ *   - CommonAPICppUserGuide.
+ *   - FrancaUserGuide.
+ * @endverbatim
+ ***********************************************************************************************************************
+ */
+
+package commonapi.app
+
+interface App {
+    version { major 0 minor 1 }
+
+    method sayHello {
+        in {
+            String name
+        }
+        out {
+            String message
+        }
+    }
+
+    // Dummy structs so that core generator generates common source code, and integration handles this scenario.
+    struct BaseStruct polymorphic {
+        Int16 a
+    }
+
+    struct Derived1 extends BaseStruct {
+        Int16 b
+    }
+
+    struct Derived2 extends BaseStruct {
+        String c
+    }
+}
+
+/******************************************************************************************************END OF FILE*****/

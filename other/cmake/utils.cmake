@@ -65,3 +65,31 @@ function(foreach_target)
         cmake_language(CALL ${PARSED_FN} ${TARGET} ${PARSED_UNPARSED_ARGUMENTS})
     endforeach()
 endfunction()
+
+# @brief Dumps all the CMake variables to the standard output.
+# @param[in] ARGV0 Optional regex expression to filter the variables by name, only matches are printed.
+# @note Based on https://stackoverflow.com/a/64004169.
+function(dump_cmake_variables)
+    # Fetch variable names and sort them alphabetically.
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+
+    foreach (_variableName ${_variableNames})
+        # Check if a regex expression was provided.
+        if (ARGV0)
+            unset(MATCHED)
+
+            # Convert everything to lowercase to perform case insensitive match.
+            string(TOLOWER "${ARGV0}" ARGV0_lower)
+            string(TOLOWER "${_variableName}" _variableName_lower)
+            string(REGEX MATCH ${ARGV0_lower} MATCHED ${_variableName_lower})
+
+            # If no match for regex expression, do not print variable.
+            if (NOT MATCHED)
+                continue()
+            endif()
+        endif()
+        # Print variable along with its value.
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+endfunction()
