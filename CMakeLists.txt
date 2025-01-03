@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION 3.25)
 
 # Enable or disable verbosity, useful for debugging. Use it as a cache variable so it applies to all files.
 option(CMAKE_VERBOSE_MAKEFILE "Set to ON to enable verbosity, defaults to 'OFF'." OFF)
+# Print where all the 'find_*' kind of CMake APIs find the relevant files and folders, useful for debugging.
+option(CMAKE_FIND_DEBUG_MODE "Set to ON to enable debug CMake find APIs, defaults to 'OFF'." OFF)
 # Allow the generation of 'compile_commands.json' for debugging purposes and intellisense.
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Set to ON to generate compilation database, defaults to 'OFF'." ON)
 
@@ -39,11 +41,14 @@ include(CTest)
 # Set the project root the current working directory at this point, that is, the root of the repository.
 set(PROJECT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
-## Project Options #####################################################################################################
-# The type of build to perform with the libraries.
-set(CFG_LIB_BUILD_TYPE "STATIC" CACHE STRING "Library build type, defaults to 'STATIC'.")
-set_property(CACHE CFG_LIB_BUILD_TYPE PROPERTY STRINGS "STATIC" "SHARED")
+# Load for all the Common API C++ runtimes and libraries from the locations specified in the environment variables.
+find_package(DBus1 REQUIRED CONFIG PATHS "$ENV{CAPICPP_DBUS_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(vsomeip3 REQUIRED CONFIG PATHS "$ENV{CAPICPP_VSOMEIP_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI REQUIRED CONFIG PATHS "$ENV{CAPICPP_CORE_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI-DBus REQUIRED CONFIG PATHS "$ENV{CAPICPP_DBUS_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
+find_package(CommonAPI-SomeIP REQUIRED CONFIG PATHS "$ENV{CAPICPP_SOMEIP_RUNTIME_DIR}/lib/cmake" NO_DEFAULT_PATH)
 
+## Project Options #####################################################################################################
 # Defines whether the files should be tagged prior to a build.
 set(CFG_TAG "OFF" CACHE STRING "Tags the C/C++ source and header files, defaults to 'OFF'.")
 set_property(CACHE CFG_TAG PROPERTY STRINGS "OFF" "FILENAMES_ONLY" "ON")
@@ -72,11 +77,18 @@ message(STATUS "########## Relevant CMake Configuration Values ##########")
 message(STATUS "CMAKE_BUILD_TYPE: '${CMAKE_BUILD_TYPE}'")
 message(STATUS "CMAKE_GENERATOR: '${CMAKE_GENERATOR}'")
 message(STATUS "CMAKE_TOOLCHAIN_FILE: '${CMAKE_TOOLCHAIN_FILE}'")
-message(STATUS "CFG_LIB_BUILD_TYPE: '${CFG_LIB_BUILD_TYPE}'")
 message(STATUS "CFG_TAG: '${CFG_TAG}'")
 message(STATUS "CFG_TESTS_ENABLE_COVERAGE: '${CFG_TESTS_ENABLE_COVERAGE}'")
 message(STATUS "CFG_TESTS_ENABLE_SANITIZERS: '${CFG_TESTS_ENABLE_SANITIZERS}'")
 message(STATUS "CFG_CI: '${CFG_CI}'")
+message(STATUS "CAPICPP_CORE_TOOLS_DIR: '$ENV{CAPICPP_CORE_TOOLS_DIR}'")
+message(STATUS "CAPICPP_DBUS_TOOLS_DIR: '$ENV{CAPICPP_DBUS_TOOLS_DIR}'")
+message(STATUS "CAPICPP_SOMEIP_TOOLS_DIR: '$ENV{CAPICPP_SOMEIP_TOOLS_DIR}'")
+message(STATUS "CAPICPP_DBUS_DIR: '$ENV{CAPICPP_DBUS_DIR}'")
+message(STATUS "CAPICPP_VSOMEIP_DIR: '$ENV{CAPICPP_VSOMEIP_DIR}'")
+message(STATUS "CAPICPP_CORE_RUNTIME_DIR: '$ENV{CAPICPP_CORE_RUNTIME_DIR}'")
+message(STATUS "CAPICPP_DBUS_RUNTIME_DIR: '$ENV{CAPICPP_DBUS_RUNTIME_DIR}'")
+message(STATUS "CAPICPP_SOMEIP_RUNTIME_DIR: '$ENV{CAPICPP_SOMEIP_RUNTIME_DIR}'")
 message(STATUS "BUILD_TESTING: '${BUILD_TESTING}'")
 message(STATUS "CMAKE_VERBOSE_MAKEFILE: '${CMAKE_VERBOSE_MAKEFILE}'")
 message(STATUS "#########################################################")
@@ -99,12 +111,20 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_ROOT_DIR}/dist" CACHE PATH "Installation directory" FORCE)
 endif()
 
-# Folder where executables and shared libraries and installed.
+# Folder where executables are installed.
 set(CMAKE_INSTALL_RUNTIMEDIR "${CMAKE_INSTALL_PREFIX}/bin")
-# Folder where libraries are installed.
+# Folder where static and shared libraries are installed.
 set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
 # Folder where include files are installed.
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/inc")
+
+## Runtime directories #################################################################################################
+# Folder where executable files are generated when built.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/.out/bin")
+# Folder where static libraries are generated when built.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/.out/lib")
+# Folder where shared libraries are generated when built.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/.out/lib")
 
 ## Compile time macros #################################################################################################
 # Add DEBUG or RELEASE macros to the build so the build type can be identified from the code.

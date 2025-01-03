@@ -48,8 +48,8 @@ function(define_test_suite TEST_SUITE_NAME)
     target_compile_definitions(${TEST_SUITE_NAME} PRIVATE "DISABLE_MAIN")
 
     # Add generic components.
-    target_sources(${TEST_SUITE_NAME} PRIVATE ${SOURCES_UTILS})
-    target_include_directories(${TEST_SUITE_NAME} PRIVATE ${INCLUDE_DIRS_UTILS})
+    target_sources(${TEST_SUITE_NAME} PRIVATE ${SOURCES_LUTILS})
+    target_include_directories(${TEST_SUITE_NAME} PRIVATE ${INCLUDE_DIRS_LUTILS})
 
     # Add test suite to CTest.
     add_test(NAME ${TEST_SUITE_NAME} COMMAND ${TEST_SUITE_NAME})

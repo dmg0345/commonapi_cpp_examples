@@ -1,0 +1,48 @@
+/**
+ ***********************************************************************************************************************
+ * @file        app.someip.fdepl
+ * @author      Diego Martínez García (dmg0345@gmail.com)
+ * @date        03-01-2025 22:07:48 (UTC)
+ * @version     0.0.2
+ * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
+ * @verbatim
+ * Common API C++ DBus Franca Deployment file, for details about this file refer to:
+ *   - CommonAPPICppUserGuide, section 2.6.3 CommonAPI Deployment.
+ *   - CommonAPI-4_deployment_spec.fdepl file, with the formal specification.
+ *   - CommonAPIDBusSomeIPCppUserGuide, section 2.5.2 Deployment.
+ *   - CommonAPI-4-SOMEIP_deployment_spec.fdepl file, with the formal specification.
+ * @endverbatim
+ ***********************************************************************************************************************
+ */
+
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "app.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface commonapi.app.App {
+    SomeIpServiceID = 4660
+
+    method sayHello {
+        SomeIpMethodID = 30000
+        SomeIpReliable = true
+        
+        in {
+            name {
+                SomeIpStringEncoding = utf16le
+            }
+        }
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider as Service {
+    instance commonapi.app.App {
+        InstanceId = "commonapi.app.App"
+        
+        SomeIpInstanceID = 22136
+    
+        SomeIpUnicastAddress = "192.168.0.2"
+        SomeIpReliableUnicastPort = 30499
+        SomeIpUnreliableUnicastPort = 30499
+    }
+}
+
+/******************************************************************************************************END OF FILE*****/

@@ -5,7 +5,8 @@
 
 CompileFlags:
   Add: [-D_CLANGD=1]
-  CompilationDatabase: .cmake_build
+  # CompilationDatabase: .cmake_build/client # For client target, restart clangd afterwards.
+  CompilationDatabase: .cmake_build/server # For server target, restart clangd afterwards.
 Diagnostics:
   Suppress: [
     # Supress unknown pragma due to the following issue, which causes diagnotic push / pop to be detected as errors:
@@ -19,7 +20,7 @@ Index:
   StandardLibrary: No
 InlayHints:
   Designators: Yes
-  Enabled: No
+  Enabled: Yes
   ParameterNames: Yes
   DeducedTypes: Yes
 Hover:

@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        googletest.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        28-12-2024 15:28:40 (UTC)
- * @version     0.0.1
+ * @date        03-01-2025 22:07:48 (UTC)
+ * @version     0.0.2
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -15,6 +15,11 @@
 #include <gmock/gmock.h>
 #include <iostream>
 
+/**
+ * @brief GoogleTest test utilities namespace.
+ *
+ * Utilities related to GoogleTest and GoogleMock for testing.
+ */
 namespace Tests::Utils::GoogleTest
 {
 

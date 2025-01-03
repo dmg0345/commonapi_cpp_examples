@@ -1,1 +1,2 @@
-# No third-party components to add.
+## Include Common API C++ Libraries ####################################################################################
+add_subdirectory("capi_gen")

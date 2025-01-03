@@ -10,7 +10,7 @@ set(PROJECT_DESCRIPTION "Common API C++ Examples")
 set(PROJECT_COPYRIGHT "github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE")
 set(PROJECT_VERSION_MAJOR "0")
 set(PROJECT_VERSION_MINOR "0")
-set(PROJECT_VERSION_PATCH "1")
+set(PROJECT_VERSION_PATCH "2")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 string(TIMESTAMP PROJECT_BUILD_TIMESTAMP_UTC "%d-%m-%Y %H:%M:%S (UTC)" UTC)
 
@@ -68,8 +68,8 @@ set(VERSION_INFO "/**
 // clang-format off
 // THIS FILE IS AUTO-GENERATED, IF MODIFIED, CHANGES WILL BE OVERWRITTEN.
 
-#ifndef UTILS_VERSION_INFO_HPP
-#define UTILS_VERSION_INFO_HPP
+#ifndef LUTILS_CVERSION_INFO_HPP
+#define LUTILS_CVERSION_INFO_HPP
 
 namespace Utils::Version
 {
@@ -151,7 +151,7 @@ constexpr const char * const BUILD_TIMESTAMP_UTC = \"${PROJECT_BUILD_TIMESTAMP_U
 
 }
 
-#endif /* UTILS_VERSION_INFO_HPP */
+#endif /* LUTILS_CVERSION_INFO_HPP */
 
 /******************************************************************************************************END OF FILE*****/")
 

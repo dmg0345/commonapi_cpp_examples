@@ -1,10 +1,11 @@
-# Create application target, and build it in the next steps.
-add_executable(app)
-# Install target configuration.
-install(TARGETS app
-        RUNTIME DESTINATION "${CMAKE_INSTALL_RUNTIMEDIR}")
+# Create client and server executable targets.
+add_executable(capicpp_client)
+add_executable(capicpp_server)
 
-## Include Third Party libraries #######################################################################################
+# Install configuration for executable targets.
+install(TARGETS capicpp_client capicpp_server RUNTIME DESTINATION "${CMAKE_INSTALL_RUNTIMEDIR}")
+
+## Include third party #################################################################################################
 add_subdirectory("third_party")
 
 ## Include utils #######################################################################################################

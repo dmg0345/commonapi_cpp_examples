@@ -16,12 +16,37 @@
             "args": [],
             "launchCompleteCommand": "exec-run",
             // Shell settings.
-            "cwd": "${workspaceFolder}",
+            "cwd": "${command:cmake.launchTargetDirectory}",
             "environment": [
                 {
                     // Add path of target to PATH in the shell.
                     "name": "PATH",
                     "value": "$PATH:${command:cmake.launchTargetDirectory}"
+                },
+                {
+                    // Common API binding configuration, change value between 'dbus' and 'someip'.
+                    "name": "COMMONAPI_CONFIG",
+                    "value": "./dbus/commonapi.ini"
+                },
+                {
+                    // Common API C++ DBus binding configuration, this setting can remain fixed.
+                    "name": "COMMONAPI_DBUS_CONFIG",
+                    "value": "./dbus/commonapi-dbus.ini"
+                },
+                {
+                    // DBus session address for Common API C++ DBus binding, this setting can remain fixed.
+                    "name": "DBUS_SESSION_BUS_ADDRESS",
+                    "value": "unix:path=/tmp/dbus-commonapi"
+                },
+                {
+                    // Common API C++ SomeIP binding configuration, this setting can remain fixed.
+                    "name": "COMMONAPI_SOMEIP_CONFIG",
+                    "value": "./someip/commonapi-someip.ini"
+                },
+                {
+                    // vSomeIP library configuration, this setting can remain fixed.
+                    "name": "VSOMEIP_CONFIGURATION",
+                    "value": "./someip/vsomeip.json"
                 }
             ],
             // Debugger settings.

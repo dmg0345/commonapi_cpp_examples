@@ -1,0 +1,2043 @@
+<h1 id="legal-notice">Legal notice</h1>
+<h2 id="copyright">Copyright</h2>
+<p>Copyright (C) 2015-2024, Bayerische Motoren Werke Aktiengesellschaft
+(BMW AG)</p>
+<h2 id="license">License</h2>
+<p>This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at <a
+href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
+<h2 id="version">Version</h2>
+<p>This documentation was generated for version 3.5 of vSomeIP.</p>
+<h1 id="vsomeip-overview">vSomeIP Overview</h1>
+<p>The vSomeIP stack implements the <a
+href="http://some-ip.com/">http://some-ip.com/</a>[Scalable
+service-Oriented MiddlewarE over IP (SOME/IP)] protocol. The stack
+consists out of:</p>
+<ul>
+<li>a shared library for SOME/IP (<code>libvsomeip.so</code>)</li>
+<li>a second shared library for SOME/IP's service discovery
+(<code>libvsomeip-sd.so</code>) which is loaded during runtime if the
+service discovery is enabled.</li>
+</ul>
+<h1 id="build-instructions">Build Instructions</h1>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>A C++17 enabled compiler is needed</li>
+<li>vSomeIP uses cmake as buildsystem.</li>
+<li>vSomeIP uses Boost &gt;= 1.66:
+<ul>
+<li>Ubuntu 22.04:
+<ul>
+<li><code>sudo apt-get install libboost-system1.74-dev libboost-thread1.74-dev libboost-log1.74-dev</code></li>
+</ul></li>
+</ul></li>
+<li>For the tests Google's test framework <a
+href="https://github.com/google/googletest/releases">https://github.com/google/googletest/releases</a></li>
+<li>To build the documentation doxygen and graphviz are needed:
+<ul>
+<li><code>sudo apt-get install doxygen graphviz</code></li>
+</ul></li>
+</ul>
+<h2 id="compilation">Compilation</h2>
+<p>For compilation call:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> ..</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
+<p>To specify a installation directory (like <code>--prefix=</code> if
+you're used to autotools) call cmake like:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DCMAKE_INSTALL_PREFIX:PATH</span><span class="op">=</span><span class="va">$YOUR_PATH</span> ..</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> install</span></code></pre></div>
+<h3 id="compilation-with-predefined-base-path">Compilation with
+predefined base path</h3>
+<p>To predefine the base path, the path that is used to create the local
+sockets, call cmake like:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DBASE_PATH</span><span class="op">=&lt;</span>YOUR BASE PATH<span class="op">&gt;</span> ..</span></code></pre></div>
+<p>The default base path is /tmp.</p>
+<h3
+id="compilation-with-predefined-unicast-andor-diagnosis-address">Compilation
+with predefined unicast and/or diagnosis address</h3>
+<p>To predefine the unicast address, call cmake like:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DUNICAST_ADDRESS</span><span class="op">=&lt;</span>YOUR IP ADDRESS<span class="op">&gt;</span> ..</span></code></pre></div>
+<p>To predefine the diagnosis address, call cmake like:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DDIAGNOSIS_ADDRESS</span><span class="op">=&lt;</span>YOUR DIAGNOSIS ADDRESS<span class="op">&gt;</span> ..</span></code></pre></div>
+<p>The diagnosis address is a single byte value.</p>
+<h3
+id="compilation-with-custom-default-configuration-folder">Compilation
+with custom default configuration folder</h3>
+<p>To change the default configuration folder, call cmake like:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DDEFAULT_CONFIGURATION_FOLDER</span><span class="op">=&lt;</span>DEFAULT CONFIGURATION FOLDER<span class="op">&gt;</span> ..</span></code></pre></div>
+<p>The default configuration folder is /etc/vsomeip.</p>
+<h3 id="compilation-with-custom-default-configuration-file">Compilation
+with custom default configuration file</h3>
+<p>To change the default configuration file, call cmake like:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DDEFAULT_CONFIGURATION_FILE</span><span class="op">=&lt;</span>DEFAULT CONFIGURATION FILE<span class="op">&gt;</span> ..</span></code></pre></div>
+<p>The default configuration file is /etc/vsomeip.json.</p>
+<h3
+id="compilation-with-changed-maximimum-wait-times-for-local-tcp-ports">Compilation
+with changed (maximimum) wait times for local TCP ports</h3>
+<p>If local communication is done via TCP, we depend on the availability
+of the network. Therefore, server port creation and therefore port
+assignment might fail. If the failure is causes by the port already
+being in use, we use the next available port. For all other failure, we
+wait for a wait time until we retry with the same port. If the overall
+wait time of all retries exceeds the maximum wait time, the endpoint
+creation is aborted. To configure wait time and maximum wait time, call
+cmake with:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DLOCAL_TCP_PORT_WAIT_TIME</span><span class="op">=</span>50 <span class="at">-DLOCAL_TCP_PORT_MAX_WAIT_TIME</span><span class="op">=</span>2000 ..</span></code></pre></div>
+<p>The default values are a wait time of 100ms and a maximum wait time
+of 10000ms. These configurations have no effect if local communication
+uses UDS (default).</p>
+<h3 id="compilation-with-signal-handling">Compilation with signal
+handling</h3>
+<p>To compile vsomeip with signal handling (SIGINT/SIGTERM) enabled,
+call cmake like:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DENABLE_SIGNAL_HANDLING</span><span class="op">=</span>1 ..</span></code></pre></div>
+<p>In the default setting, the application has to take care of shutting
+down vsomeip in case these signals are received.</p>
+<h3 id="compilation-with-user-defined-ready-message">Compilation with
+user defined "READY" message</h3>
+<p>To compile vsomeip with a user defined message signal the IP routing
+to be ready to send/receive messages, call cmake like:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DROUTING_READY_MESSAGE</span><span class="op">=&lt;</span>YOUR MESSAGE<span class="op">&gt;</span> ..</span></code></pre></div>
+<h3 id="compilation-with-vsomeip-2-compatibility-layer">Compilation with
+vSomeIP 2 compatibility layer</h3>
+<p>To compile vsomeip with enabled vSomeIP 2 compatibility layer, call
+cmake like:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DENABLE_COMPAT</span><span class="op">=</span>1 ..</span></code></pre></div>
+<h3 id="compilation-of-examples">Compilation of examples</h3>
+<p>For compilation of the examples call:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> ..</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> examples</span></code></pre></div>
+<h3 id="compilation-of-tests">Compilation of tests</h3>
+<p>To compile the tests, first unzip gtest to location of your desire.
+Some of the tests require a second node on the same network. There are
+two cmake variables which are used to automatically adapt the json files
+to the used network setup:</p>
+<ul>
+<li><code>TEST_IP_MASTER</code>: The IP address of the interface which
+will act as test master.</li>
+<li><code>TEST_IP_SLAVE</code>: The IP address of the interface of the
+second node which will act as test slave.</li>
+</ul>
+<p>If one of this variables isn't specified, only the tests using local
+communication exclusively will be runnable.</p>
+<p>Additionally the unit tests require enabled signal handling which can
+be enabled via the <code>ENABLE_SIGNAL_HANDLING</code> cmake
+variable.</p>
+<p>Example, compilation of tests:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">GTEST_ROOT</span><span class="op">=</span><span class="va">$PATH_TO_GTEST</span>/gtest-1.7.0/</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> <span class="at">-DENABLE_SIGNAL_HANDLING</span><span class="op">=</span>1 <span class="at">-DTEST_IP_MASTER</span><span class="op">=</span>10.0.3.1 <span class="at">-DTEST_IP_SLAVE</span><span class="op">=</span>10.0.3.125 ..</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> check</span></code></pre></div>
+<p>Additional make targets for the tests:</p>
+<ul>
+<li>Call <code>make build_tests</code> to only compile the tests</li>
+<li>Call <code>ctest</code> in the build directory to execute the tests
+without a verbose output</li>
+<li>To run single tests call
+<code>ctest --verbose --tests-regex $TESTNAME</code> short form:
+<code>ctest -V -R $TESTNAME</code></li>
+<li>To list all available tests run <code>ctest -N</code>.</li>
+<li>For further information about the tests please have a look at the
+<code>readme.txt</code> in the <code>test</code> subdirectory.</li>
+</ul>
+<p>For development purposes two cmake variables exist which control if
+the json files and test scripts are copied (default) or symlinked into
+the build directory. These settings are ignored on Windows.</p>
+<ul>
+<li><code>TEST_SYMLINK_CONFIG_FILES</code>: Controls if the json and
+scripts needed to run the tests are copied or symlinked into the build
+directory. (Default: OFF, ignored on Windows)</li>
+<li><code>TEST_SYMLINK_CONFIG_FILES_RELATIVE</code>: Controls if the
+json and scripts needed to run the tests are symlinked relatively into
+the build directory. (Default: OFF, ignored on Windows)</li>
+</ul>
+<p>Example cmake call:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span>  <span class="at">-DTEST_SYMLINK_CONFIG_FILES</span><span class="op">=</span>ON <span class="at">-DTEST_SYMLINK_CONFIG_FILES_RELATIVE</span><span class="op">=</span>ON ..</span></code></pre></div>
+<p>For compilation of only a subset of tests (for a quick functionality
+check) the cmake variable <code>TESTS_BAT</code> has to be set:</p>
+<p>Example cmake call:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span>  <span class="at">-DTESTS_BAT</span><span class="op">=</span>ON ..</span></code></pre></div>
+<h3 id="compilation-of-vsomeip_ctrl">Compilation of vsomeip_ctrl</h3>
+<p>For compilation of the <a href="#vsomeip_ctrl">vsomeip_ctrl</a>
+utility call:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> ..</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> vsomeip_ctrl</span></code></pre></div>
+<h3 id="generating-the-documentation">Generating the documentation</h3>
+<p>To generate the documentation call cmake as described in <a
+href="#compilation">Compilation</a> and then call <code>make doc</code>.
+This will generate:</p>
+<ul>
+<li>The README file in html:
+<code>$BUILDDIR/documentation/README.html</code></li>
+<li>A doxygen documentation in
+<code>$BUILDDIR/documentation/html/index.html</code></li>
+</ul>
+<h1
+id="starting-vsomeip-applications--used-environment-variables">Starting
+vsomeip Applications / Used environment variables</h1>
+<p>On startup the following environment variables are read out:</p>
+<ul>
+<li><code>VSOMEIP_APPLICATION_NAME</code>: This environment variable is
+used to specify the name of the application. This name is later used to
+map a client id to the application in the configuration file. It is
+independent from the application's binary name.</li>
+<li><code>VSOMEIP_CONFIGURATION</code>: vsomeip uses the default
+configuration file <code>/etc/vsomeip.json</code> and/or the default
+configuration folder <code>/etc/vsomeip</code>. This can be overridden
+by a local configuration file <code>./vsomeip.json</code> and/or a local
+configuration folder <code>./vsomeip</code>. If
+<code>VSOMEIP_CONFIGURATION</code> is set to a valid file or directory
+path, this is used instead of the standard configuration (thus neither
+default nor local file/folder will be parsed).</li>
+<li><code>VSOMEIP_CONFIGURATION_&lt;application&gt;</code>:
+Application-specific version of <code>VSOMEIP_CONFIGURATION</code>.
+Please note that <application> must be valid as part of an environment
+variable.</li>
+<li><code>VSOMEIP_MANDATORY_CONFIGURATION_FILES</code>: vsomeip allows
+to specify mandatory configuration files to speed-up application
+startup. While mandatory configuration files are read by all
+applications, all other configuration files are only read by the
+application that is responsible for connections to external devices. If
+this configuration variable is not set, the default mandatory files
+vsomeip_std.json, vsomeip_app.json and vsomeip_plc.json are used.</li>
+<li><code>VSOMEIP_CLIENTSIDELOGGING</code>: Set this variable to an
+empty string to enable logging of any received messages to DLT in all
+applications acting as routing manager proxies. For example add the
+following line to the application's systemd service file:
+<code>Environment=VSOMEIP_CLIENTSIDELOGGING=""</code> To enable
+service-specific logs, provide a space- or colon-separated list of
+ServiceIDs (using 4-digit hexadecimal notation, optionally followed by
+dot-separted InstanceID). For example:
+<code>Environment=VSOMEIP_CLIENTSIDELOGGING="b003.0001 f013.000a 1001 1002"</code>
+<code>Environment=VSOMEIP_CLIENTSIDELOGGING="b003.0001:f013.000a:1001:1002"</code></li>
+</ul>
+<p>NOTE: If the file/folder that is configured by
+<code>VSOMEIP_CONFIGURATION</code> does <em>not</em> exist, the default
+configuration locations will be used.</p>
+<p>NOTE: vsomeip will parse and use the configuration from all files in
+a configuration folder but will <em>not</em> consider directories within
+the configuration folder.</p>
+<p>In the following example the application
+<code>my_vsomeip_application</code> is started. The settings are read
+from the file <code>my_settings.json</code> in the current working
+directory. The client id for the application can be found under the name
+<code>my_vsomeip_client</code> in the configuration file.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">VSOMEIP_APPLICATION_NAME</span><span class="op">=</span>my_vsomeip_client</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">VSOMEIP_CONFIGURATION</span><span class="op">=</span>my_settings.json</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./my_vsomeip_application</span></span></code></pre></div>
+<h1 id="configuration-file-structure">Configuration File Structure</h1>
+<p>The configuration files for vsomeip are <a
+href="http://www.json.org">JSON</a>-Files and are composed out of
+multiple key value pairs and arrays.</p>
+<blockquote>
+<ul>
+<li><p>An object is an unordered set of name/value pairs. An object
+begins with <code>{ (left brace)</code> and ends with
+<code>} (right brace)</code>. Each name is followed by
+<code>: (colon)</code> and the name/value pairs are separated by
+<code>, (comma)</code>.</p></li>
+<li><p>An array is an ordered collection of values. An array begins with
+<code>[ (left bracket)</code> and ends with
+<code>] (right bracket)</code>. Values are separated by
+<code>, (comma)</code>.</p></li>
+<li><p>A value can be a <em>string</em> in double quotes, or a
+<em>number</em>, or <code>true</code> or <code>false</code> or
+<code>null</code>, or an <em>object</em> or an <em>array</em>. These
+structures can be nested.</p></li>
+</ul>
+</blockquote>
+<p>Configuration file element explanation:</p>
+<ul>
+<li><p>'unicast'</p>
+<p>The IP address of the host system.</p></li>
+<li><p>'netmask'</p>
+<p>The netmask to specify the subnet of the host system.</p></li>
+<li><p>'device' (optional)</p>
+<p>If specified, IP endpoints will be bound to this device.</p></li>
+<li><p>'diagnosis'</p>
+<p>The diagnosis address (byte) that will be used to build client
+identifiers. The diagnosis address is assigned to the most significant
+byte in all client identifiers if not specified otherwise (for example
+through a predefined client ID).</p></li>
+<li><p>'diagnosis_mask'</p>
+<p>The diagnosis mask (2 byte) is used to control the maximum amount of
+allowed concurrent vsomeip clients on an ECU and the start value of the
+client IDs.</p>
+<p>The default value is <code>0xFF00</code> meaning the most significant
+byte of the client ID is reserved for the diagnosis address and the
+client IDs will start with the diagnosis address as specified. The
+maximum number of clients is 255 as the Hamming weight of the inverted
+mask is 8 (2^8 = 256 - 1 (for the routing manager) = 255). The resulting
+client ID range with a diagnosis address of for example 0x45 would be
+0x4501 to 0x45ff.</p>
+<p>Setting the mask to <code>0xFE00</code> doubles client ID range to
+511 clients as the Hamming weight of the inverted mask is greater by
+one. With a diagnosis address of 0x45 the start value of client IDs is
+0x4401 as bit 8 in 0x4500 is masked out. This then yields a client ID
+range of 0x4400 to 0x45ff.</p></li>
+<li><p>'network' Network identifier used to support multiple routing
+managers on one host. This setting changes the name of the shared memory
+segment in <code>/dev/shm</code> and the name of the unix domain sockets
+in <code>/tmp/</code>. Defaults to <code>vsomeip</code> meaning the
+shared memory will be named <code>/dev/shm/vsomeip</code> and the unix
+domain sockets will be named
+<code>/tmp/vsomeip-$CLIENTID</code></p></li>
+<li><p>'logging'</p>
+<ul>
+<li><p>'level'</p>
+<p>Specifies the log level (valid values: <em>trace</em>,
+<em>debug</em>, <em>info</em>, <em>warning</em>, <em>error</em>,
+<em>fatal</em>).</p></li>
+<li><p>'console'</p>
+<p>Specifies whether logging via console is enabled (valid values:
+<em>true, false</em>).</p></li>
+<li><p>'file'</p>
+<ul>
+<li><p>'enable'</p>
+<p>Specifies whether a log file should be created (valid values:
+<em>true, false</em>).</p></li>
+<li><p>'path'</p>
+<p>The absolute path of the log file.</p></li>
+</ul></li>
+<li><p>'dlt'</p>
+<p>Specifies whether Diagnostic Log and Trace (DLT) is enabled (valid
+values: <em>true, false</em>).</p></li>
+<li><p>'version'</p>
+<p>Configures logging of the vsomeip version</p>
+<ul>
+<li><p>'enable'</p>
+<p>Enable or disable cyclic logging of vsomeip version, defaults to true
+(valid values: <em>true, false</em>)</p></li>
+<li><p>'interval'</p>
+<p>Configures interval in seconds to log the vsomeip version. Default
+value is 10.</p></li>
+</ul></li>
+<li><p>'memory_log_interval'</p>
+<p>Configures interval in seconds in which the routing manager logs its
+used memory. Setting a value greater than zero enables the
+logging.</p></li>
+<li><p>'status_log_interval'</p>
+<p>Configures interval in seconds in which the routing manager logs its
+internal status. Setting a value greater than zero enables the
+logging.</p></li>
+</ul></li>
+<li><p>'tracing' (optional)<a id="tracing-anchor"></a></p>
+<ul>
+<li><p>'enable'</p>
+<p>Specifies whether the tracing of the SOME/IP messages is enabled
+(valid values: <em>true, false</em>). Default value is <em>false</em>.
+If tracing is enabled, the messages will be forwarded to DLT by the <a
+href="#trace-connector">Trace Connector</a></p></li>
+<li><p>'sd_enable'</p>
+<p>Specifies whether the tracing of the SOME/IP service discovery
+messages is enabled (valid values: <em>true, false</em>). Default value
+is <em>false</em>.</p></li>
+<li><p>'channels (array)' (optional)</p>
+<p>Contains the channels to DLT.</p>
+<p>NOTE: You can set up multiple channels to DLT over that you can
+forward the messages.</p>
+<ul>
+<li><p>'name'</p>
+<p>The name of the channel.</p></li>
+<li><p>'id'</p>
+<p>The id of the channel.</p></li>
+</ul></li>
+<li><p>'filters (array)' (optional)</p>
+<p>Contains the filters that are applied on the messages.</p>
+<p>NOTE: You can apply filters respectively filter rules on the messages
+with specific criterias and expressions. So only the filtered messages
+are forwarded to DLT.</p>
+<ul>
+<li><p>'channel' (optional)</p>
+<p>The id of the channel over that the filtered messages are forwarded
+to DLT. If no channel is specified the default channel (TC) is used. If
+you want to use a filter in several different channels, you can provide
+an array of channel ids.</p>
+<p>NOTE: If you use a positive filter with multiple channels, the same
+message will be forwared multiple times to DLT.</p></li>
+<li><p>'matches' (optional)</p>
+<p>Specification of the criteria to include/exclude a message into/from
+the trace. You can either specify lists (array) or ranges of matching
+elements.</p>
+<p>A list may contain single identifiers which match all messages
+from/to all instances of the corresponding service or tuples consisting
+of service-, instance- and method-identifier. 'any' may be used as a
+wildcard for matching all services, instances or methods.</p>
+<p>A range is specified by two tuples "from" and "to", each consisting
+of service-, instance-and method-identifier. All messages with service-,
+instance-and method-identifiers that are greater than or equal to "from"
+and less than or equal to "to" are matched.</p></li>
+<li><p>'type' (optional)</p>
+<p>Specifies the filter type (valid values: "positive", "negative",
+"header-only"). When a positive filter is used and a message matches one
+of the filter rules, the message will be traced/forwarded to DLT. With a
+negative filter messages can be excluded. So when a message matches one
+of the filter rules, the message will not be traced/forwarded to DLT.
+Default value is "positive". The value "header-only" implies the filter
+is also considered "positive".</p></li>
+</ul></li>
+</ul></li>
+<li><p>'applications (array)'</p>
+<p>Contains the applications of the host system that use this config
+file.</p>
+<ul>
+<li><p>'name'</p>
+<p>The name of the application.</p></li>
+<li><p>'id'</p>
+<p>The id of the application. Usually its high byte is equal to the
+diagnosis address. In this case the low byte must be different from
+zero. Thus, if the diagnosis address is 0x63, valid values range from
+0x6301 until 0x63FF. It is also possible to use id values with a high
+byte different from the diagnosis address.</p></li>
+<li><p>'max_dispatchers' (optional)</p>
+<p>The maximum number of threads that shall be used to execute the
+application callbacks. Default is 10.</p></li>
+<li><p>'max_dispatch_time' (optional)</p>
+<p>The maximum time in ms that an application callback may consume
+before the callback is considered to be blocked (and an additional
+thread is used to execute pending callbacks if max_dispatchers is
+configured greater than 0). The default value if not specified is
+100ms.</p></li>
+<li><p>'max_detached_thread_wait_time' (optional)</p>
+<p>The maximum time in seconds that an application will wait for a
+detached dispatcher thread to finish executing. The default value if not
+specified is 5s.</p></li>
+<li><p>'threads' (optional)</p>
+<p>The number of internal threads to process messages and events within
+an application. Valid values are 1-255. Default is 2.</p></li>
+<li><p>'io_thread_nice' (optional)</p>
+<p>The nice level for internal threads processing messages and events.
+POSIX/Linux only. For actual values refer to nice()
+documentation.</p></li>
+<li><p>'request_debounce_time' (optional)</p>
+<p>Specifies a debounce-time interval in ms in which request-service
+messages are sent to the routing manager. If an application requests
+many services in short same time the load of sent messages to the
+routing manager and furthermore the replies from the routing manager
+(which contains the routing info for the requested service if available)
+can be heavily reduced. The default value if not specified is
+10ms.</p></li>
+<li><p>'plugins' (optional array)</p>
+<p>Contains the plug-ins that should be loaded to extend the
+functionality of vsomeip.</p>
+<ul>
+<li><p>'name'</p>
+<p>The name of the plug-in.</p></li>
+<li><p>'type'</p>
+<p>The plug-in type (valid values: <em>application_plugin</em>).</p>
+<p>An application plug-in extends the functionality on application
+level. It gets informed by vsomeip over the basic application states
+(INIT/START/STOP) and can, based on these notifications, access the
+standard "application"-API via the runtime.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>services</code> (array)</p>
+<p>Contains the services of the service provider.</p>
+<ul>
+<li><p><code>service</code></p>
+<p>The id of the service.</p></li>
+<li><p><code>instance</code></p>
+<p>The id of the service instance.</p></li>
+<li><p><code>protocol</code> (optional)</p>
+<p>The protocol that is used to implement the service instance. The
+default setting is <em>someip</em>. If a different setting is provided,
+vsomeip does not open the specified port (server side) or does not
+connect to the specified port (client side). Thus, this option can be
+used to let the service discovery announce a service that is externally
+implemented.</p></li>
+<li><p><code>unicast</code> (optional)</p>
+<p>The unicast that hosts the service instance.</p>
+<p>NOTE: The unicast address is needed if external service instances
+shall be used, but service discovery is disabled. In this case, the
+provided unicast address is used to access the service
+instance.</p></li>
+<li><p><code>reliable</code></p>
+<p>Specifies that the communication with the service is reliable
+respectively the TCP protocol is used for communication.</p>
+<ul>
+<li><p><code>port</code></p>
+<p>The port of the TCP endpoint.</p></li>
+<li><p><code>enable-magic-cookies</code></p>
+<p>Specifies whether magic cookies are enabled (valid values:
+<em>true</em>, <em>false</em>).</p></li>
+</ul></li>
+<li><p><code>unreliable</code></p>
+<p>Specifies that the communication with the service is unreliable
+respectively the UDP protocol is used for communication (valid values:
+the <em>port</em> of the UDP endpoint).</p></li>
+<li><p><code>events</code> (array)</p>
+<p>Contains the events of the service.</p>
+<ul>
+<li><p><code>event</code></p>
+<p>The id of the event.</p></li>
+<li><p><code>is_field</code></p>
+<p>Specifies whether the event is of type field.</p>
+<p>NOTE: A field is a combination of getter, setter and notification
+event. It contains at least a getter, a setter, or a notifier. The
+notifier sends an event message that transports the current value of a
+field on change.</p></li>
+<li><p><code>is_reliable</code></p>
+<p>Specifies whether the communication is reliable respectively whether
+the event is sent with the TCP protocol (valid values:
+<em>true</em>,<em>false</em>).</p>
+<p>If the value is <em>false</em> the UDP protocol will be
+used.</p></li>
+</ul></li>
+<li><p><code>eventgroups</code> (array)</p>
+<p>Events can be grouped together into on event group. For a client it
+is thus possible to subscribe for an event group and to receive the
+appropriate events within the group.</p>
+<ul>
+<li><p><code>eventgroup</code></p>
+<p>The id of the event group.</p></li>
+<li><p><code>events</code> (array)</p>
+<p>Contains the ids of the appropriate events.</p></li>
+<li><p><code>multicast</code></p>
+<p>Specifies the multicast that is used to publish the eventgroup.</p>
+<ul>
+<li><p><code>address</code></p>
+<p>The multicast address.</p></li>
+<li><p><code>port</code></p>
+<p>The multicast port.</p></li>
+</ul></li>
+<li><p><code>threshold</code></p>
+<p>Specifies when to use multicast and when to use unicast to send a
+notification event. Must be set to a non-negative number. If it is set
+to zero, all events of the eventgroup will be sent by unicast.
+Otherwise, the events will be sent by unicast as long as the number of
+subscribers is lower than the threshold and by multicast if the number
+of subscribers is greater or equal. This means, a threshold of 1 will
+lead to all events being sent by multicast. The default value is
+<em>0</em>.</p></li>
+</ul></li>
+<li><p><code>debounce-times</code> (object)</p>
+<p>Used to configure the nPDU feature. This is described in detail in <a
+href="#vsomeip-npdu-feature">vSomeIP nPDU feature</a>.</p></li>
+<li><p><code>someip-tp</code> (object)</p>
+<p>Used to configure the SOME/IP-TP feature. There's an example
+available at <a href="#someip-tp">SOME/IP-TP</a>.</p>
+<ul>
+<li><p><code>service-to-client</code> (array)</p>
+<p>Contains the IDs for responses, fields and events which are sent from
+the node to a remote client which can be segmented via SOME/IP-TP if
+they exceed the maximum message size for UDP communication. If an ID
+isn't listed here the message will otherwise be dropped if the maximum
+message size is exceeded.</p></li>
+<li><p><code>client-to-service</code> (array)</p>
+<p>Contains the IDs for requests, which are sent from the node to a
+remote service which can be segmented via SOME/IP-TP if they exceed the
+maximum message size for UDP communication. If an ID isn't listed here
+the message will otherwise be dropped if the maximum message size is
+exceeded.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>clients</code> (array)</p>
+<p>The client-side ports that shall be used to connect to a specific
+service. For each service, an array of ports to be used for reliable /
+unreliable communication can be specified. vsomeip will take the first
+free port of the list. If no free port can be found, the connection will
+fail. If vsomeip is asked to connect to a service instance without
+specified port(s), the port will be selected by the system. This implies
+that the user has to ensure that the ports configured here do not
+overlap with the ports automatically selected by the IP stack.</p>
+<ul>
+<li><p><code>service</code></p></li>
+<li><p><code>instance</code></p>
+<p>Together they specify the service instance the port configuration
+shall be applied to.</p></li>
+<li><p><code>reliable</code> (array)</p>
+<p>The list of client ports to be used for reliable (TCP) communication
+to the given service instance.</p></li>
+<li><p><code>unreliable</code> (array)</p>
+<p>The list of client ports to be used for unreliable (UDP)
+communication to the given service instance.</p>
+<p>Additionally there is the possibility to configure mappings between
+ranges of client ports and ranges of remote service ports. (If a client
+port is configured for a specific service / instance, the port range
+mapping is ignored)</p></li>
+<li><p><code>reliable_remote_ports</code></p>
+<p>Specifies a range of reliable remote service ports</p></li>
+<li><p><code>unreliable_remote_ports</code></p>
+<p>Specifies a range of unreliable remote service ports</p></li>
+<li><p><code>reliable_client_ports</code></p>
+<p>Specifies the range of reliable client ports to be mapped to the
+reliable_remote_ports range</p></li>
+<li><p><code>unreliable_client_ports</code></p>
+<p>Specifies the range of unreliable client ports to be mapped to the
+unreliable_remote_ports range</p></li>
+<li><p><code>first</code></p>
+<p>Specifies the lower bound of a port range</p></li>
+<li><p><code>last</code></p>
+<p>Specifies the upper bound of a port range</p></li>
+</ul></li>
+<li><p><code>payload-sizes</code> (array)</p>
+<p>Array to limit the maximum allowed payload sizes per IP and port. If
+not specified otherwise the allowed payload sizes are unlimited. The
+settings in this array only affect communication over TCP. To limit the
+local payload size <code>max-payload-size-local</code> can be used.</p>
+<ul>
+<li><p><code>unicast</code> (optional)</p>
+<p>On client side: the IP of the remote service for which the payload
+size should be limited.</p>
+<p>On service side: the IP of the offered service for which the payload
+size for receiving and sending should be limited.</p></li>
+<li><p><code>ports</code> (array)</p>
+<p>Array which holds pairs of port and payload size statements.</p>
+<ul>
+<li><p><code>port</code></p>
+<p>On client side: the port of the remote service for which the payload
+size should be limited.</p>
+<p>On service side: the port of the offered service for which the
+payload size for receiving and sending should be limited.</p></li>
+<li><p><code>max-payload-size</code></p>
+<p>On client side: the payload size limit in bytes of a message sent to
+the remote service hosted on beforehand specified IP and port.</p>
+<p>On service side: the payload size limit in bytes of messages received
+and sent by the service offered on previously specified IP and port.</p>
+<p>If multiple services are hosted on the same port they all share the
+limit specified.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>max-payload-size-local</code></p>
+<p>The maximum allowed payload size for node internal communication in
+bytes. By default the payload size for node internal communication is
+unlimited. It can be limited via this setting.</p></li>
+<li><p><code>max-payload-size-reliable</code></p>
+<p>The maximum allowed payload size for TCP communication in bytes. By
+default the payload size for TCP communication is unlimited. It can be
+limited via this setting.</p></li>
+<li><p><code>max-payload-size-unreliable</code></p>
+<p>The maximum allowed payload size for UDP communication via SOME/IP-TP
+in bytes. By default the payload size for UDP via SOME/IP-TP
+communication is unlimited. It can be limited via this setting. This
+setting only applies for SOME/IP-TP enabled methods/events/fields
+(otherwise the UDP default of 1400 bytes applies). See <a
+href="#someip-tp">SOME/IP-TP</a> for an example configuration.</p></li>
+<li><p><code>endpoint-queue-limits</code> (array)</p>
+<p>Array to limit the maximum allowed size in bytes of cached outgoing
+messages per IP and port (message queue size per endpoint). If not
+specified otherwise the allowed queue size is unlimited. The settings in
+this array only affect external communication. To limit the local queue
+size <code>endpoint-queue-limit-local</code> can be used.</p>
+<ul>
+<li><p><code>unicast</code></p>
+<p>On client side: the IP of the remote service for which the queue size
+of sent requests should be limited.</p>
+<p>On service side: the IP of the offered service for which the queue
+size for sent responses should be limited. This IP address is therefore
+identical to the IP address specified via <code>unicast</code> setting
+on top level of the json file.</p></li>
+<li><p><code>ports</code> (array)</p>
+<p>Array which holds pairs of port and queue size statements.</p>
+<ul>
+<li><p><code>port</code></p>
+<p>On client side: the port of the remote service for which the queue
+size of sent requests should be limited.</p>
+<p>On service side: the port of the offered service for which the queue
+size for send responses should be limited.</p></li>
+<li><p><code>queue-size-limit</code></p>
+<p>On client side: the queue size limit in bytes of messages sent to the
+remote service hosted on beforehand specified IP and port.</p>
+<p>On service side: the queue size limit in bytes for responses sent by
+the service offered on previously specified IP and port.</p>
+<p>If multiple services are hosted on the same port they all share the
+limit specified.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>endpoint-queue-limit-external</code></p>
+<p>Setting to limit the maximum allowed size in bytes of cached outgoing
+messages for external communication (message queue size per endpoint).
+By default the queue size for external communication is unlimited. It
+can be limited via this setting. Settings done in the
+<code>endpoint-queue-limits</code> array override this setting.</p></li>
+<li><p><code>endpoint-queue-limit-local</code></p>
+<p>Setting to limit the maximum allowed size in bytes of cached outgoing
+messages for local communication (message queue size per endpoint). By
+default the queue size for node internal communication is unlimited. It
+can be limited via this setting.</p></li>
+<li><p><code>buffer-shrink-threshold</code></p>
+<p>The number of processed messages which are half the size or smaller
+than the allocated buffer used to process them before the memory for the
+buffer is released and starts to grow dynamically again. This setting
+can be useful in scenarios where only a small number of the overall
+messages are a lot bigger then the rest and the memory allocated to
+process them should be released in a timely manner. If the value is set
+to zero the buffer sizes aren't reseted and are as big as the biggest
+processed message. (default is 5)</p>
+<p>Example: <code>buffer-shrink-threshold</code> is set to 50. A message
+with 500 bytes has to be processed and the buffers grow accordingly.
+After this message 50 consecutive messages smaller than 250 bytes have
+to be processed before the buffer size is reduced and starts to grow
+dynamically again.</p></li>
+<li><p><code>tcp-restart-aborts-max</code></p>
+<p>Setting to limit the number of TCP client endpoint restart aborts due
+to unfinished TCP handshake. After the limit is reached, a forced
+restart of the TCP client endpoint is done if the connection attempt is
+still pending.</p></li>
+<li><p><code>tcp-connect-time-max</code></p>
+<p>Setting to define the maximum time until the TCP client endpoint
+connection attempt should be finished. If
+<code>tcp-connect-time-max</code> is elapsed, the TCP client endpoint is
+forcely restarted if the connection attempt is still pending.</p></li>
+<li><p><code>udp-receive-buffer-size</code></p>
+<p>Specifies the size of the socket receive buffer
+(<code>SO_RCVBUF</code>) used for UDP client and server endpoints in
+bytes. (default: 1703936)</p></li>
+<li><p><code>internal_services</code> (optional array)</p>
+<p>Specifies service/instance ranges for pure internal
+service-instances. This information is used by vsomeip to avoid sending
+Find-Service messages via the Service-Discovery when a client is
+requesting a not available service- instance. Its can either be done on
+service/instance level or on service level only which then includes all
+instance from 0x0000-0xffff.</p>
+<ul>
+<li><p><code>first</code></p>
+<p>The lowest entry of the internal service range.</p>
+<ul>
+<li><p><code>service</code></p>
+<p>The lowest Service-ID in hex of the internal service range.</p></li>
+<li><p><code>instance</code> (optional)</p>
+<p>The lowest Instance-ID in hex of a internal service-instance range.
+If not specified the lowest Instance-ID is 0x0000.</p></li>
+</ul></li>
+<li><p><code>last</code></p>
+<p>The highest entry of the internal service range.</p>
+<ul>
+<li><p><code>service</code></p>
+<p>The highest Service-ID in hex of a internal service range.</p></li>
+<li><p><code>instance</code> (optional)</p>
+<p>The highest Instance-ID in hex of a internal service-instance range.
+If not specified the highest Instance-ID is 0xFFFF.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>debounce</code> (optional array)</p>
+<p>Events/fields sent by external devices will be forwarded to the
+applications only if a configurable function evaluates to true. The
+function checks whether the event/field payload has changed and whether
+a specified interval has been elapsed since the last
+forwarding.</p></li>
+<li><p><code>service</code></p>
+<p>Service ID which hosts the events to be debounced.</p>
+<ul>
+<li><p><code>instance</code></p>
+<p>Instance ID which hosts the events to be debounced.</p></li>
+<li><p><code>events</code></p>
+<p>Array of events which shall be debounced based on the following
+configuration options.</p>
+<ul>
+<li><p><code>event</code></p>
+<p>Event ID.</p></li>
+<li><p><code>on_change</code></p>
+<p>Specifies whether the event is forwarded on payload change or not.
+(valid values: <em>true</em>, <em>false</em>). Default is
+<em>false</em>.</p></li>
+<li><p><code>ignore</code></p>
+<p>Array of payload indexes with given bit mask (optional) to be ignored
+in payload change evaluation. Instead of specifying an index / bitmask
+pair, one can only define the payload index which shall be ignored in
+the evaluation.</p>
+<ul>
+<li><p><code>index</code></p>
+<p>Payload index to be checked with given bitmask.</p></li>
+<li><p><code>mask</code></p>
+<p>1Byte bitmask applied to byte at given payload index. Example mask:
+0x0f ignores payload changes in low nibble of the byte at given
+index.</p></li>
+</ul></li>
+<li><p><code>interval</code></p>
+<p>Specifies if the event shall be debounced based on elapsed time
+interval. (valid values: <em>time in ms</em>, <em>never</em>). Default
+is <em>never</em>.</p></li>
+<li><p><code>on_change_resets_interval</code> (optional)</p>
+<p>Specifies if interval timer is reset when payload change was
+detected. (valid values: <em>false</em>, <em>true</em>). Defaults to
+<em>false</em>.</p></li>
+<li><p><code>send_current_value_after</code> (optional)</p>
+<p>Specifies if last message should be sent after interval timeout.
+(valid values: <em>false</em>, <em>true</em>). Defaults to
+<em>false</em>.</p></li>
+</ul></li>
+</ul></li>
+<li><p><code>routing</code> (optional)</p>
+<p>Specifies the properties of the routing. Either a string that
+specifies the application that hosts the routing component or a
+structure that specifies all properties of the routing. If the routing
+is not specified, the first started application will host the routing
+component.</p>
+<ul>
+<li><p><code>host</code></p>
+<p>Properties of the routing manager.</p>
+<ul>
+<li><p><code>name</code></p>
+<p>Name if the application that hosts the routing component.</p></li>
+<li><p><code>uid</code></p>
+<p>User identifier of the process that runs the routing component. Must
+be specified if credential checks are enabled by
+<em>check_credentials</em> set to true.</p></li>
+<li><p><code>gid</code></p>
+<p>Group identifier of the process that runs the routing component. Must
+be specified if credential checks are enabled by
+<em>check_credentials</em> set to true.</p></li>
+<li><p><code>unicast</code> (optional)</p>
+<p>The unicast address that shall be used by the routing manager, if the
+internal communication shall be done by using TCP connections.</p></li>
+<li><p><code>port</code> (optional)</p>
+<p>The port that shall be used by the routing manager, if the internal
+communication shall be done by using TCP connections.</p></li>
+</ul></li>
+<li><p><code>guests</code> (optional)</p>
+<p>Properties of all applications that do not host the routing
+component, if the internal communication shall be done using TCP
+connections.</p>
+<ul>
+<li><p><code>unicast</code></p>
+<p>The unicast address that shall be used by the applications to connect
+to the routing manager.</p></li>
+<li><p><code>ports</code></p>
+<p>A set of port ranges that shall be used to connect to the routing
+manager per user identifier/group identifier. Either specify uid, gid
+and ranges, or only a set of port ranges. If uid and gid are not
+explicitly specified, they default to any. Each client application
+requires two ports, one for receiving messages from other applications
+and one to send messages to other applications.</p>
+<ul>
+<li><p><code>uid</code></p>
+<p>User identifier</p></li>
+<li><p><code>gid</code></p>
+<p>Group identifier</p></li>
+<li><p><code>ranges</code></p>
+<p>Set of port ranges. Each entry consists of a <code>first</code>,
+<code>last</code> pair that determines the first and the last port of a
+port range.</p>
+<ul>
+<li><p><code>first</code></p>
+<p>First port of a port range</p></li>
+<li><p><code>last</code></p>
+<p>Last port of a port range</p>
+<p>NOTE: Each configured port range must contain an even number of
+ports. If an even port number is configured to be the routing host port,
+the first port in the range must also be even. If an uneven port number
+is configured to be the routing host port, the first port in the range
+must also be uneven.</p></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><code>routing-credentials</code> (deprecated)</p>
+<p>The UID / GID of the application acting as routing manager. (Must be
+specified if credentials checks are enabled using
+<em>check_credentials</em> set to <em>true</em> in order to successfully
+check the routing managers credentials passed on connect)</p>
+<ul>
+<li><p><code>uid</code></p>
+<p>The routing managers UID.</p></li>
+<li><p><code>gid</code></p></li>
+</ul>
+<p>The routing managers GID.</p></li>
+<li><p><code>shutdown_timeout</code></p>
+<p>Configures the time in milliseconds local clients wait for
+acknowledgement of their deregistration from the routing manager during
+shutdown. Defaults to 5000ms.</p></li>
+<li><p><code>warn_fill_level</code></p>
+<p>The routing manager regulary checks the fill level of the send
+buffers to its clients. This variable defines the minimum fill level in
+percent that leads to a warning being logged. Defaults to 67.</p></li>
+<li><p><code>service-discovery</code></p>
+<p>Contains settings related to the Service Discovery of the host
+application.</p>
+<ul>
+<li><p><code>enable</code></p>
+<p>Specifies whether the Service Discovery is enabled (valid values:
+<em>true</em>, <em>false</em>). The default value is
+<em>true</em>.</p></li>
+<li><p><code>initial_state</code></p>
+<p>Specifies the initial Service Discovery state after startup (valid
+values: <em>unknown</em>, <em>suspended</em>, <em>resumed</em>). The
+default value is <em>unknown</em>.</p></li>
+<li><p><code>multicast</code></p>
+<p>The multicast address which the messages of the Service Discovery
+will be sent to. The default value is <em>224.0.0.1</em>.</p></li>
+<li><p><code>port</code></p>
+<p>The port of the Service Discovery. The default setting is
+<em>30490</em>.</p></li>
+<li><p><code>protocol</code></p>
+<p>The protocol that is used for sending the Service Discovery messages
+(valid values: <em>tcp</em>, <em>udp</em>). The default setting is
+<em>udp</em>.</p></li>
+<li><p><code>initial_delay_min</code></p>
+<p>Minimum delay before first offer message.</p></li>
+<li><p><code>initial_delay_max</code></p>
+<p>Maximum delay before first offer message.</p></li>
+<li><p><code>repetitions_base_delay</code></p>
+<p>Base delay sending offer messages within the repetition
+phase.</p></li>
+<li><p><code>repetitions_max</code></p>
+<p>Maximum number of repetitions for provided services within the
+repetition phase.</p></li>
+<li><p><code>ttl</code></p>
+<p>Lifetime of entries for provided services as well as consumed
+services and eventgroups.</p></li>
+<li><p><code>ttl_factor_offers</code> (optional array)</p>
+<p>Array which holds correction factors for incoming remote offers. If a
+value greater than one is specified for a service instance, the TTL
+field of the corresponding service entry will be multiplied with the
+specified factor. + Example: An offer of a service is received with a
+TTL of 3 sec and the TTL factor is set to 5. The remote node stops
+offering the service w/o sending a StopOffer message. The service will
+then expire (marked as unavailable) 15 seconds after the last offer has
+been received.</p>
+<ul>
+<li><p><code>service</code></p>
+<p>The id of the service.</p></li>
+<li><p><code>instance</code></p>
+<p>The id of the service instance.</p></li>
+<li><p><code>ttl_factor</code></p>
+<p>TTL correction factor</p></li>
+</ul></li>
+<li><p><code>ttl_factor_subscriptions</code> (optional array)</p>
+<p>Array which holds correction factors for incoming remote
+subscriptions. If a value greater than one is specified for a service
+instance, the TTL field of the corresponding eventgroup entry will be
+multiplied with the specified factor. + Example: A remote subscription
+to an offered service is received with a TTL of 3 sec and the TTL factor
+is set to 5. The remote node stops resubscribing to the service w/o
+sending a StopSubscribeEventgroup message. The subscription will then
+expire 15 seconds after the last resubscription has been received.</p>
+<ul>
+<li><p><code>service</code></p>
+<p>The id of the service.</p></li>
+<li><p><code>instance</code></p>
+<p>The id of the service instance.</p></li>
+<li><p><code>ttl_factor</code></p>
+<p>TTL correction factor</p></li>
+</ul></li>
+<li><p><code>cyclic_offer_delay</code></p>
+<p>Cycle of the OfferService messages in the main phase.</p></li>
+<li><p><code>request_response_delay</code></p>
+<p>Minimum delay of a unicast message to a multicast message for
+provided services and eventgroups.</p></li>
+<li><p><code>offer_debounce_time</code></p>
+<p>Time which the stack collects new service offers before they enter
+the repetition phase. This can be used to reduce the number of sent
+messages during startup. The default setting is <em>500ms</em>.</p></li>
+</ul></li>
+<li><p>'suppress_missing_event_logs'</p>
+<p>Used to filter the log message
+<code>deliver_notification: Event [1234.5678.80f3] is not registered. The message is dropped.</code>
+that occurs whenever vSomeIP receives an event without having a
+corresponding object being registered.</p></li>
+</ul>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="er">...</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="er">&quot;suppress_missing_event_logs&quot;</span> <span class="er">:</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0023&quot;</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;events&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x8001&quot;</span><span class="ot">,</span> <span class="st">&quot;0x8002&quot;</span><span class="ot">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">{</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x8010&quot;</span><span class="fu">,</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x801f&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;0x8020&quot;</span> <span class="ot">]</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0023&quot;</span><span class="fu">,</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0002&quot;</span><span class="fu">,</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;events&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x8005&quot;</span><span class="ot">,</span> <span class="st">&quot;0x8006&quot;</span> <span class="ot">]</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0023&quot;</span><span class="fu">,</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0002&quot;</span><span class="fu">,</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;events&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x8105&quot;</span><span class="ot">,</span> <span class="st">&quot;0x8106&quot;</span> <span class="ot">]</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        <span class="er">//</span> <span class="er">no</span> <span class="dt">&quot;events&quot;</span> <span class="er">--&gt;</span> <span class="er">ignore</span> <span class="er">all(!)</span> <span class="er">events</span> <span class="er">of</span> <span class="er">these</span> <span class="er">services</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span><span class="fu">,</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x00f2&quot;</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0102&quot;</span><span class="fu">,</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span><span class="fu">,</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;events&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x8005&quot;</span><span class="ot">,</span> <span class="st">&quot;0x8006&quot;</span> <span class="ot">]</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div>
+<ul>
+<li><p><code>watchdog</code> (optional)</p>
+<p>The Watchdog sends periodically pings to all known local clients. If
+a client isn't responding within a configurred time/amount of pongs the
+watchdog deregisters this application/client. If not configured the
+watchdog isn't activated.</p>
+<ul>
+<li><p><code>enable</code></p>
+<p>Specifies whether the watchdog is enabled or disabled. (valid values:
+<em>true, false</em>), (default is <em>false</em>).</p></li>
+<li><p><code>timeout</code></p>
+<p>Specifies the timeout in ms the watchdog gets activated if a ping
+isn't answered with a pong by a local client within that time. (valid
+values: <em>2 - 2^32</em>), (default is <em>5000</em> ms).</p></li>
+<li><p><code>allowed_missing_pongs</code></p>
+<p>Specifies the amount of allowed missing pongs. (valid values: <em>1 -
+2^32</em>), (default is <em>3</em> pongs).</p></li>
+</ul></li>
+<li><p><code>supports_selective_broadcasts</code> (optional array)</p>
+<p>This nodes allow to add a list of IP addresses on which
+CAPI-Selective-Broadcasts feature is supported. If not specified the
+feature can't be used and the subscription behavior of the stack is same
+as with normal events.</p>
+<ul>
+<li><p><code>address</code></p>
+<p>Specifies an IP-Address (in IPv4 or IPv6 notation) on which the
+"selective"-feature is supported. Multiple addresses can be
+configured.</p></li>
+</ul></li>
+</ul>
+<h1 id="security">Security</h1>
+<p>vsomeip has a security implementation based on UNIX credentials. If
+activated every local connection is authenticated during connect using
+the standard UNIX credential passing mechanism. During authentication a
+client transfers its client identifier together with its credentials
+(UID / GID) to the server which is then matched against the
+configuration. If received credentials don't match the policy the socket
+will be immediately closed by the server and an message is logged. If
+accepted the client identifier is bound to the receiving socket and can
+therefore be used to do further security checks on incoming messages
+(vsomeip messages as well as internal commands).</p>
+<p>In general clients can be configured to be allowed/denied to request
+(means communicate with) and offer different service instances. Every
+incoming vsomeip message (request/response/notification) as well as
+offer service requests or local subscriptions are then checked against
+the policy. If an incoming vsomeip message or another operation (e.g.
+offer/subscribe) violates the configured policies it is skipped and a
+message is logged.</p>
+<p>Furthermore if an application receives informations about other
+clients/services in the system, it must be received from the
+authenticated routing manager. This is to avoid malicious applications
+faking the routing manager and therefore being able to wrongly inform
+other clients about services running on the system. Therefore, whenever
+the "security" tag is specified, the routing manager (e.g.
+routingmanagerd/vsomeipd) must be a configured application with a fixed
+client identifier. See chapter "Configuration File Structure" on how to
+configure an application to use a specific client identifier.</p>
+<p>Credential passing is only possible via Unix-Domain-Sockets and
+therefore only available for local communication. However if security is
+activated method calls from remote clients to local services are checked
+as well which means remote clients needs to be explicitly allowed. Such
+a policy looks same in case for local clients except the
+<em>credentials</em> tag can be skipped.</p>
+<h2 id="security-configuration">Security configuration</h2>
+<p>The available configuration switches for the security feature
+are:</p>
+<ul>
+<li><p><code>security</code> (optional)</p>
+<p>NOTE: As long as no <em>security</em> node exists, the security
+implementation is switched off. This also means, no external security
+library will be loaded and used.</p>
+<p>If specified the credential passing mechanism is activated. However
+no credential or security checks are done as long as
+<em>check_credentials</em> isn't set to <em>true</em>, but the routing
+manager client ID must be configured if security tag is specified. If
+<em>check_credentials</em> is set to <em>true</em>, the routing managers
+UID and GID needs to be specified using <em>routing-credentials</em>
+tag.</p>
+<ul>
+<li><p><code>check_credentials</code> (optional)</p>
+<p>Specifies whether security checks are active or not. This includes
+credentials checks on connect as well as all policies checks configured
+in follow. (valid values: <em>true, false</em>), (default is
+<em>false</em>).</p></li>
+<li><p><code>allow_remote_clients</code> (optional)</p>
+<p>Specifies whether incoming remote requests / subscriptions are
+allowed to be sent to a local proxy / client. If not specified, all
+remote requests / subscriptions are allowed to be received by default.
+(valid values are 'true' and 'false')</p></li>
+<li><p><code>policies</code> (array)</p>
+<p>Specifies the security policies. Each policy at least needs to
+specify <em>allow</em> or <em>deny</em>.</p>
+<ul>
+<li><p><code>credentials</code></p>
+<p>Specifies the credentials for which a security policy will be
+applied. If <em>check_credentials</em> is set to <em>true</em> the
+credentials of a local application needs to be specified correctly to
+ensure local socket authentication can succeed.</p>
+<ul>
+<li><p><code>uid</code></p>
+<p>Specifies the LINUX user id of the client application as decimal
+number. As a wildcard "any" can be used.</p></li>
+<li><p><code>gid</code></p>
+<p>Specifies the LINUX group id of the client application as decimal
+number. As a wildcard "any" can be used.</p></li>
+<li><p><code>allow</code> / <code>deny</code> (optional)</p>
+<p>Specifies whether the LINUX user and group ids are allowed or denied
+for the policy.</p>
+<ol type="1">
+<li><code>uid</code> (array)</li>
+</ol>
+<p>Specifies a list of LINUX user ids. These may either be specified as
+decimal numbers or as ranges. Ranges are specified by the first and the
+last valid id (see example below).</p>
+<ol start="2" type="1">
+<li><code>gid</code> (array)</li>
+</ol>
+<p>Specifies a list of LINUX group ids. These may either be specified as
+decimal numbers or as ranges. Ranges are specified by the first and the
+last valid id (see example below).</p></li>
+</ul></li>
+<li><p><code>allow</code> / <code>deny</code></p>
+<p>This tag specifies either <em>allow</em> or <em>deny</em> depending
+on white- or blacklisting is needed. Specifing <em>allow</em> and
+<em>deny</em> entries in one policy is therefore not allowed. With
+<em>allow</em> a whitelisting of what is allowed can be done which means
+an empty <em>allow</em> tag implies everything is denied. With
+<em>deny</em> a blacklisting of what is allowed can be done which means
+an empty <em>deny</em> tag implies everything is allowed.</p>
+<ul>
+<li><p><code>requests</code> (array)</p>
+<p>Specifies a set of service instance pairs which the above client
+application using the credentials above is allowed/denied to communicate
+with.</p>
+<ol type="1">
+<li><p><code>service</code></p>
+<p>Specifies a service for the <em>requests</em>.</p></li>
+<li><p><code>instance</code> (deprecated)</p>
+<p>Specifies a instance for the <em>requests</em> As a wildcard "any"
+can be used which means a range from instance ID 0x01 to 0xFFFF which
+also implies a method ID range from 0x01 to 0xFFFF.</p></li>
+<li><p><code>instances</code> (array)</p>
+<p>Specifies a set of instance ID and method ID range pairs which are
+allowed/denied to communicate with. If the <code>ids</code> tag below is
+not used to specify allowed/denied requests on method ID level one can
+also only specify a a set of instance ID ranges which are allowed/denied
+to be requested analogous to the allowed/denied <code>offers</code>
+section. If no method IDs are specified, the allowed/denied methods are
+by default a range from 0x01 to 0xFFFF.</p>
+<ol type="1">
+<li><p><code>ids</code></p>
+<p>Specifies a set of instance ID ranges which are allowed/denied to
+communicate with. It is also possible to specify a single instance ID as
+array element without giving an upper / lower range bound. As a wildcard
+"any" can be used which means a range from instance ID 0x01 to
+0xFFFF.</p>
+<p><code>first</code> - The lower bound of the instance range.</p>
+<p><code>last</code> - The upper bound of the instance range.</p></li>
+<li><p><code>methods</code></p>
+<p>Specifies a set of method ID ranges which are allowed/denied to
+communicate with. It is also possible to specify a single method ID as
+array element without giving an upper / lower range bound. As a wildcard
+"any" can be used which means a range from method ID 0x01 to 0xFFFF.</p>
+<p><code>first</code> - The lower bound of the method range.</p>
+<p><code>last</code> - The upper bound of the method range.</p></li>
+</ol></li>
+</ol></li>
+<li><p><code>offers</code> (array)</p>
+<p>Specifies a set of service instance pairs which are allowed/denied to
+be offered by the client application using the credentials above.</p>
+<ol type="1">
+<li><p><code>service</code></p>
+<p>Specifies a service for the <em>offers</em>.</p></li>
+<li><p><code>instance</code> (deprecated)</p>
+<p>Specifies a instance for the <em>offers</em> As a wildcard "any" can
+be used which means a range from instance ID 0x01 to 0xFFFF.</p></li>
+<li><p><code>instances</code> (array)</p>
+<p>Specifies a set of instance ID ranges which are allowed/denied to be
+offered by the client application using the credentials above. It is
+also possible to specify a single instance ID as array element without
+giving an upper / lower range bound. As a wildcard "any" can be used
+which means a range from instance ID 0x01 to 0xFFFF.</p>
+<ol type="1">
+<li><p><code>first</code></p>
+<p>The lower bound of the instance range.</p></li>
+<li><p><code>last</code></p>
+<p>The upper bound of the instance range.</p></li>
+</ol></li>
+</ol></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="security-configuration-example">Security configuration
+example</h2>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="er">...</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="er">&quot;security&quot;</span> <span class="er">:</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;policies&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            <span class="er">...</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;credentials&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;uid&quot;</span> <span class="fu">:</span> <span class="st">&quot;44&quot;</span><span class="fu">,</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;gid&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">},</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>             <span class="dt">&quot;allow&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>             <span class="ot">[</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;requests&quot;</span> <span class="er">:</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">[</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6731&quot;</span><span class="fu">,</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0001&quot;</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">]</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>             <span class="ot">]</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>         <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>         <span class="fu">{</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;credentials&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;deny&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">{</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;uid&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;1000&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;1002&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;max&quot;</span> <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;gid&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;100&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;243&quot;</span> <span class="fu">}</span><span class="ot">,</span> <span class="st">&quot;300&quot;</span><span class="ot">]</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">{</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;uid&quot;</span> <span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;55&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;gid&quot;</span> <span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;55&quot;</span><span class="ot">]</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">]</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>             <span class="fu">},</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>             <span class="dt">&quot;allow&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>             <span class="ot">[</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;offers&quot;</span> <span class="er">:</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">[</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6728&quot;</span><span class="fu">,</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;instances&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x0001&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0003&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0007&quot;</span> <span class="fu">}</span><span class="ot">,</span> <span class="st">&quot;0x0009&quot;</span><span class="ot">]</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6729&quot;</span><span class="fu">,</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;instances&quot;</span> <span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;0x88&quot;</span><span class="ot">]</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6730&quot;</span><span class="fu">,</span></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span></span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">],</span></span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;requests&quot;</span> <span class="er">:</span></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">[</span></span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6732&quot;</span><span class="fu">,</span></span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">&quot;instances&quot;</span> <span class="fu">:</span></span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>                         <span class="ot">[</span></span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">{</span></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>                                 <span class="dt">&quot;ids&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x0001&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0003&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0007&quot;</span> <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>                                 <span class="dt">&quot;methods&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x0001&quot;</span><span class="ot">,</span> <span class="st">&quot;0x0003&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x8001&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x8006&quot;</span> <span class="fu">}</span> <span class="ot">]</span></span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">{</span></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>                                 <span class="dt">&quot;ids&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x0009&quot;</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>                                 <span class="dt">&quot;methods&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">}</span></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>                         <span class="ot">]</span></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6733&quot;</span><span class="fu">,</span></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x1&quot;</span></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">{</span></span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x6733&quot;</span><span class="fu">,</span></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;instances&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;0x0002&quot;</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;first&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0003&quot;</span><span class="fu">,</span> <span class="dt">&quot;last&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x0007&quot;</span> <span class="fu">}</span><span class="ot">,</span> <span class="st">&quot;0x0009&quot;</span><span class="ot">]</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">}</span></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>                 <span class="ot">]</span></span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a>             <span class="ot">]</span></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a>         <span class="fu">}</span></span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a>     <span class="ot">]</span></span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The config/ folder contains some addition vsomeip configuration files
+to run the vsomeip examples with activated security checks. Additionally
+there's a security test in the <code>test/</code> subfolder which can be
+used for further reference. + They give a basic overview how to use the
+security related configuration tags described in this chapter to run a
+simple request/response or subscribe/notify example locally or
+remotely.</p>
+<h2 id="security-policy-extensions">Security policy extensions</h2>
+<p>vsomeip policy extension configuration supports the definition of
+paths that contain additional security policies to be loaded whenever a
+client with a yet unknown hostname connects to a local server endpoint.
+The following configuration parameters are available and can be defined
+in a file named <code>vsomeip_policy_extensions.json</code>.</p>
+<ul>
+<li><p><code>container_policies</code> (optional array)</p>
+<p>Specifies the additional configuration folders to be loaded for each
+container hostname / filesystem path pair.</p>
+<ul>
+<li><p><code>container</code></p>
+<p>Specifies the linux hostname.</p></li>
+<li><p><code>path</code></p>
+<p>Specifies a filesystem path (relative to
+vsomeip_policy_extensions.json or absolute) which contains $UID_$GID
+subfolders that hold a <code>vsomeip_security.json</code> file.</p>
+<p>NOTE: ($UID / $GID) is the UID /GID of the vsomeip client application
+to which a client from hostname defined with
+<code>container</code>connetcs to.</p></li>
+</ul></li>
+</ul>
+<h2 id="audit-mode">Audit Mode</h2>
+<p>vsomeip's security implementation can be put in a so called 'Audit
+Mode' where all security violations will be logged but allowed. This
+mode can be used to build a security configuration.</p>
+<p>To activate the 'Audit Mode' the 'security' object has to be included
+in the json file but the 'check_credentials' switch has to be set to
+false. For example:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="er">&quot;services&quot;</span> <span class="er">:</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="er">,</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="er">&quot;security&quot;</span> <span class="er">:</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;check_credentials&quot;</span> <span class="fu">:</span> <span class="st">&quot;false&quot;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="er">&quot;routing&quot;</span> <span class="er">:</span> <span class="er">&quot;service-sample&quot;,</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span></code></pre></div>
+<h1 id="autoconfiguration">Autoconfiguration</h1>
+<p>vsomeip supports the automatic configuration of client identifiers
+and the routing. The first application that starts using vsomeip will
+automatically become the routing manager if it is <em>not</em>
+explicitly configured. The client identifiers are generated from the
+diagnosis address that can be specified by defining DIAGNOSIS_ADDRESS
+when compiling vsomeip. vsomeip will use the diagnosis address as the
+high byte and enumerate the connecting applications within the low byte
+of the client identifier.</p>
+<p>Autoconfiguration of client identifiers isn't meant to be used
+together with vsomeip Security. Every client running locally needs to
+have at least its own credentials configured when security is activated
+to ensure the credential checks can pass. Practically that means if a
+client requests its identifier over the autoconfiguration for which no
+credentials are configured (at least it isn't known which client
+identifier is used beforehand) it is impossible for that client to
+establish a connection to a server endpoint. However if the credentials
+for all clients are same it's possible to configure them for the overall
+(or DIAGNOSIS_ADDRESS) client identifier range to mix autoconfiguration
+together with activated security.</p>
+<h1 id="routingmanagerd">routingmanagerd</h1>
+<p>The routingmanagerd is a minimal vsomeip application intended to
+offer routing manager functionality on a node where one system wide
+configuration file is present. It can be found in the examples
+folder.</p>
+<p>Example: Starting the daemon on a system where the system wide
+configuration is stored under <code>/etc/vsomeip.json</code>:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="va">VSOMEIP_CONFIGURATION</span><span class="op">=</span>/etc/vsomeip.json <span class="ex">./routingmanagerd</span></span></code></pre></div>
+<p>When using the daemon it should be ensured that:</p>
+<ul>
+<li>In the system wide configuration file the routingmanagerd is defined
+as routing manager, meaning it contains the line
+<code>"routing" : "routingmanagerd"</code>. If the default name is
+overridden the entry has to be adapted accordingly. The system wide
+configuration file should contain the information about all other
+offered services on the system as well.</li>
+<li>There's no other vsomeip configuration file used on the system which
+contains a <code>"routing"</code> entry. As there can only be one
+routing manager per system.</li>
+</ul>
+<h1 id="vsomeip-hello-world">vsomeip Hello World</h1>
+<p>In this paragraph a Hello World program consisting out of a client
+and a service is developed. The client sends a message containing a
+string to the service. The service appends the received string to the
+string <code>Hello</code> and sends it back to the client. Upon
+receiving a response from the service the client prints the payload of
+the response ("Hello World"). This example is intended to be run on the
+same host.</p>
+<p>All files listed here are contained in the
+<code>examples\hello_world</code> subdirectory.</p>
+<h2 id="build-instructions-1">Build instructions</h2>
+<p>The example can build with its own CMakeFile, please compile the
+vsomeip stack before hand as described in <a
+href="#compilation">Compilation</a>. Then compile the example starting
+from the repository root directory as followed:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> examples/hello_world</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> build</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> build</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cmake</span> ..</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
+<h2 id="starting-and-expected-output">Starting and expected output</h2>
+<h3 id="starting-and-expected-output-of-service">Starting and expected
+output of service</h3>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> VSOMEIP_CONFIGURATION=../helloworld-local.json <span class="dt">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  VSOMEIP_APPLICATION_NAME=hello_world_service <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  ./hello_world_service</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:13.248437 [info] Using configuration file: ../helloworld-local.json</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:13.248766 [debug] Routing endpoint at /tmp/vsomeip-0</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:13.248913 [info] Service Discovery disabled. Using static routing information.</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:13.248979 [debug] Application<span class="er">(</span><span class="ex">hello_world_service,</span> 4444<span class="kw">)</span> <span class="ex">is</span> initialized.</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:22.705010 [debug] Application/Client 5555 got registered!</span></code></pre></div>
+<h3 id="starting-and-expected-output-of-client">Starting and expected
+output of client</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> VSOMEIP_CONFIGURATION=../helloworld-local.json <span class="dt">\</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  VSOMEIP_APPLICATION_NAME=hello_world_client <span class="dt">\</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  ./hello_world_client</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:22.704166 [info] Using configuration file: ../helloworld-local.json</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:22.704417 [debug] Connecting to [0] at /tmp/vsomeip-0</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:22.704630 [debug] Listening at /tmp/vsomeip-5555</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="ex">2015-04-01</span> 11:31:22.704680 [debug] Application<span class="er">(</span><span class="ex">hello_world_client,</span> 5555<span class="kw">)</span> <span class="ex">is</span> initialized.</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="ex">Sending:</span> World</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ex">Received:</span> Hello World</span></code></pre></div>
+<h2 id="cmakefile">CMakeFile</h2>
+<p><a
+href="../examples/hello_world/CMakeLists.txt">examples/hello_world/CMakeLists.txt</a></p>
+<h2 id="configuration-file-for-client-and-service">Configuration File
+For Client and Service</h2>
+<p><a
+href="../examples/hello_world/helloworld-local.json">examples/hello_world/helloworld-local.json</a></p>
+<h2 id="service">Service</h2>
+<p><a
+href="../examples/hello_world/hello_world_service_main.cpp">examples/hello_world/hello_world_service_main.cpp</a></p>
+<p>The service example results in the following program execution:</p>
+<h3 id="main">Main</h3>
+<ol type="1">
+<li><p><em>main()</em></p>
+<p>First the application is initialized. After the initialization is
+finished the application is started.</p></li>
+</ol>
+<h3 id="initialization">Initialization</h3>
+<ol start="2" type="1">
+<li><p><em>init()</em></p>
+<p>The initialization contains the registration of a message handler and
+an event handler.</p>
+<p>The message handler declares a callback
+(<strong>on_message_cbk</strong>) for messages that are sent to the
+specific service (specifying the service id, the service instance id and
+the service method id).</p>
+<p>The event handler declares a callback (<strong>on_event_cbk</strong>)
+for events that occur. One event can be the successful registration of
+the application at the runtime.</p></li>
+</ol>
+<h3 id="start">Start</h3>
+<ol start="3" type="1">
+<li><p><em>start()</em></p>
+<p>The application will be started. This function only returns when the
+application will be stopped.</p></li>
+</ol>
+<h3 id="callbacks">Callbacks</h3>
+<ol start="4" type="1">
+<li><p><em>on_state_cbk()</em></p>
+<p>This function is called by the application when an state change
+occurred. If the application was successfully registered at the runtime
+then the specific service is offered.</p></li>
+<li><p><em>on_message_cbk()</em></p>
+<p>This function is called when a message/request from a client for the
+specified service was received.</p>
+<p>First a response based upon the request is created. Afterwards the
+string 'Hello' will be concatenated with the payload of the client's
+request. After that the payload of the response is created. The payload
+data is set with the previously concatenated string. Finally the
+response is sent back to the client and the application is
+stopped.</p></li>
+</ol>
+<h3 id="stop">Stop</h3>
+<ol start="6" type="1">
+<li><p><em>stop()</em></p>
+<p>This function stops offering the service, unregister the message and
+the event handler and shuts down the application.</p></li>
+</ol>
+<h2 id="client">Client</h2>
+<p><a
+href="../examples/hello_world/hello_world_client_main.cpp">examples/hello_world/hello_world_client_main.cpp</a></p>
+<p>The client example results in the following program execution:</p>
+<h3 id="main-1">Main</h3>
+<ol type="1">
+<li><p><em>main()</em></p>
+<p>First the application is initialized. After the initialization is
+finished the application is started.</p></li>
+</ol>
+<h3 id="initialization-1">Initialization</h3>
+<ol start="2" type="1">
+<li><p><em>init()</em></p>
+<p>The initialization contains the registration of a message handler, an
+event handler and an availability handler.</p>
+<p>The event handler declares again a callback
+(<strong>on_state_cbk</strong>) for state changes that occur.</p>
+<p>The message handler declares a callback
+(<strong>on_message_cbk</strong>) for messages that are received from
+any service, any service instance and any method.</p>
+<p>The availability handler declares a callback
+(<strong>on_availability_cbk</strong>) which is called when the specific
+service is available (specifying the service id and the service instance
+id).</p></li>
+</ol>
+<h3 id="start-1">Start</h3>
+<ol start="3" type="1">
+<li><p><em>start()</em></p>
+<p>The application will be started. This function only returns when the
+application will be stopped.</p></li>
+</ol>
+<h3 id="callbacks-1">Callbacks</h3>
+<ol start="4" type="1">
+<li><p><em>on_state_cbk()</em></p>
+<p>This function is called by the application when an state change
+occurred. If the application was successfully registered at the runtime
+then the specific service is requested.</p></li>
+<li><p><em>on_availability_cbk()</em></p>
+<p>This function is called when the requested service is available or no
+longer available.</p>
+<p>First there is a check if the change of the availability is related
+to the 'hello world service' and the availability changed to true. If
+the check is successful a service request is created and the appropriate
+service information are set (service id, service instance id, service
+method id). After that the payload of the request is created. The data
+of the payload is 'World' and will be set afterwards. Finally the
+request is sent to the service.</p></li>
+<li><p><em>on_message_cbk()</em></p>
+<p>This function is called when a message/response was received. If the
+response is from the requested service, of type 'RESPONSE' and the
+return code is 'OK' then the payload of the response is printed. Finally
+the application is stopped.</p></li>
+</ol>
+<h3 id="stop-1">Stop</h3>
+<ol start="7" type="1">
+<li><em>stop()</em></li>
+</ol>
+<p>This function unregister the event and the message handler and shuts
+down the application.</p>
+<h1 id="trace-connector">Trace Connector</h1>
+<h2 id="overviewprerequisites">Overview/Prerequisites</h2>
+<p>The Trace Connector is used to forward the internal messages that are
+sent over the Unix Domain Sockets to DLT. + Thus, it requires that DLT
+is installed and the DLT module can be found in the context of
+CMake.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="static-configuration">Static Configuration</h3>
+<p>The Trace Connector can be configured statically over the
+<em>tracing</em> point of the <a href="#tracing-anchor">Configuration
+File Structure</a></p>
+<h3 id="example-1-minimal-configuration">Example 1 (Minimal
+Configuration)</h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tracing&quot;</span> <span class="fu">:</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;enable&quot;</span> <span class="fu">:</span> <span class="st">&quot;true&quot;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span></code></pre></div>
+<p>This is the minimal configuration of the Trace Connector. This just
+enables the tracing and all of the sent internal messages will be
+traced/forwarded to DLT.</p>
+<h3 id="example-2-using-filters">Example 2 (Using Filters)</h3>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tracing&quot;</span> <span class="fu">:</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;enable&quot;</span> <span class="fu">:</span> <span class="st">&quot;true&quot;</span><span class="fu">,</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;channels&quot;</span> <span class="fu">:</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;name&quot;</span> <span class="fu">:</span> <span class="st">&quot;My channel&quot;</span><span class="fu">,</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;id&quot;</span> <span class="fu">:</span> <span class="st">&quot;MC&quot;</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;filters&quot;</span> <span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;channel&quot;</span> <span class="fu">:</span> <span class="st">&quot;MC&quot;</span><span class="fu">,</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;matches&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="fu">{</span> <span class="dt">&quot;service&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x1234&quot;</span><span class="fu">,</span> <span class="dt">&quot;instance&quot;</span> <span class="fu">:</span> <span class="st">&quot;any&quot;</span><span class="fu">,</span> <span class="dt">&quot;method&quot;</span> <span class="fu">:</span> <span class="st">&quot;0x80e8&quot;</span> <span class="fu">}</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;type&quot;</span> <span class="fu">:</span> <span class="st">&quot;positive&quot;</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span></code></pre></div>
+<p>As it is a positive filter, the example filter ensures that only
+messages representing method '0x80e8' from instances of service '0x1234'
+will be forwarded to the DLT. If it was specified as a negative filter,
+all messages except messages representing method '0x80e8' from instances
+of service '0x1234' would be forwarded to the DLT.</p>
+<p>The general filter rules are:</p>
+<ul>
+<li>The default filter is a positive filter for all messages.</li>
+<li>The default filter is active on a channel as long as no other
+positive filter is specified.</li>
+<li>Negative filters block matching messages. Negative filters overrule
+positive filters. Thus, as soon as a messages matches a negative filter
+it will not be forwarded.</li>
+<li>The identifier '0xffff' is a wildcard that matches any service,
+instance or method. The keyword 'any' can be used as a replacement for
+'0xffff'.</li>
+<li>Wildcards must not be used within range filters.</li>
+</ul>
+<h3 id="dynamic-configuration">Dynamic Configuration</h3>
+<p>The Trace Connector can also be configured dynamically over its
+interfaces. You need to include '&lt;vsomeip/trace.hpp&gt;' to access
+its public interface.</p>
+<h3 id="example">Example:</h3>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode c++"><code class="sourceCode cpp"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">// get trace connector</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>vsomeip<span class="op">::</span>trace<span class="op">::</span>connector<span class="op">&gt;</span> its_connector</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">=</span> vsomeip<span class="op">::</span>trace<span class="op">::</span>connector<span class="op">::</span>get<span class="op">();</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// add channel</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>vsomeip<span class="op">::</span>trace<span class="op">::</span>channel<span class="op">&gt;</span> its_channel</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">=</span> its_connector<span class="op">-&gt;</span>create_channel<span class="op">(</span><span class="st">&quot;MC&quot;</span><span class="op">,</span> <span class="st">&quot;My channel&quot;</span><span class="op">);</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// add filter rule</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    vsomeip<span class="op">::</span>trace<span class="op">::</span><span class="dt">match_t</span> its_match</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">=</span> <span class="bu">std::</span>make_tuple<span class="op">(</span><span class="bn">0x1234</span><span class="op">,</span> <span class="bn">0xffff</span><span class="op">,</span> <span class="bn">0x80e8</span><span class="op">);</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    vsomeip<span class="op">::</span>trace<span class="op">::</span><span class="dt">filter_id_t</span> its_filter_id</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">=</span> its_channel<span class="op">-&gt;</span>add_filter<span class="op">(</span>its_match<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// init trace connector</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    its_connector<span class="op">-&gt;</span>init<span class="op">();</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// enable trace connector</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    its_connector<span class="op">-&gt;</span>set_enabled<span class="op">(</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// remove the filter</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    its_channel<span class="op">-&gt;</span>remove_filter<span class="op">(</span>its_filter_id<span class="op">);</span></span></code></pre></div>
+<h1 id="vsomeip-npdu-feature">vsomeip nPDU feature</h1>
+<p>This is the add-on documentation for the nPDU feature, aka.
+<em>Zugverfahren</em>.</p>
+<p>The nPDU feature can be used to reduce network load as it enables the
+vsomeip stack to combine multiple vsomeip messages in one single
+ethernet frame.</p>
+<p>Some general <em>important</em> things regarding the nPDU feature
+first:</p>
+<ul>
+<li>Due to its nature the nPDU feature trades lower network load for
+speed.</li>
+<li>As the nPDU feature requires some settings which are not transmitted
+through the service discovery, it's <em>not</em> sufficient anymore to
+have an json file without a "services" section on the client side.</li>
+<li>As the client- and server-endpoints of a node are managed by the
+routing manager (which is the application entered at "routing" in the
+json file) the nPDU feature settings <em>always</em> have to be defined
+in the json file used by the application acting as routing manager.</li>
+<li>The nPDU feature timings are defined in milliseconds.</li>
+<li>Node internal communication over UNIX domain sockets is not affected
+by the nPDU feature.</li>
+<li>If the debounce times configuration for a method in the json file is
+missing or incomplete the default values are used: 2ms debounce time and
+5ms max retention time. The global default values can be overwritten via
+the <code>npdu-default-timings</code> json object.</li>
+</ul>
+<h2 id="configuration-1">Configuration</h2>
+<p>There are two parameters specific for the nPDU feature:</p>
+<ul>
+<li><em>debounce time</em>: minimal time between sending a message to
+the same method of a remote service over the same connection (src/dst
+address + src/dst port).</li>
+<li><em>max retention time</em>: the maximum time which a message to the
+same method of a remote service over the same connection (src/dst
+address + src/dst port) is allowed to be buffered on sender side.</li>
+</ul>
+<p>For more information please see the corresponding requirement
+documents.</p>
+<p>The nPDU feature specific settings are configured in the json file in
+the "services" section on service level in a special
+<em>debounce-times</em> section:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="er">&quot;services&quot;:</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>            <span class="er">//</span> <span class="er">nPDU</span> <span class="er">feature</span> <span class="er">configuration</span> <span class="er">for</span> <span class="er">this</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>            <span class="er">//</span> <span class="er">service</span> <span class="er">here</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span><span class="er">,</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span></code></pre></div>
+<p>Additionally nPDU default timings can be configured globally.</p>
+<p>The global default timings can be overwritten via the
+<code>npdu-default-timings</code> json object. For example the following
+configuration snippet shows how to set all default timings to zero:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="er">[...]</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;npdu-default-timings&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;debounce-time-request&quot;</span> <span class="fu">:</span> <span class="st">&quot;0&quot;</span><span class="fu">,</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;debounce-time-response&quot;</span> <span class="fu">:</span> <span class="st">&quot;0&quot;</span><span class="fu">,</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;max-retention-time-request&quot;</span> <span class="fu">:</span> <span class="st">&quot;0&quot;</span><span class="fu">,</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;max-retention-time-response&quot;</span> <span class="fu">:</span> <span class="st">&quot;0&quot;</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="example-1-one-service-with-one-method-offered-over-udp">Example
+1: One service with one method offered over UDP</h3>
+<ul>
+<li>The service is hosted on IP: 192.168.1.9.</li>
+<li>The service is offered on port 30509 via UDP.</li>
+<li>The service has the ID 0x1000</li>
+<li>The method has the ID 0x0001</li>
+<li>The client accesses the service from IP: 192.168.1.77</li>
+</ul>
+<h3 id="service-side">Service side</h3>
+<ul>
+<li>Debounce time for responses should have a:
+<ul>
+<li>debounce time of 10 milliseconds</li>
+<li>maximum retention time of 100 milliseconds</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;responses&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;10&quot;</span><span class="fu">,</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;100&quot;</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="client-side">Client side</h4>
+<ul>
+<li>Debounce time for requests to the service on 192.168.1.9 should have
+a:
+<ul>
+<li>debounce time of 20 milliseconds</li>
+<li>maximum retention time of 200 milliseconds</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.77&quot;</span><span class="fu">,</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span> <span class="er">//</span> <span class="er">required</span> <span class="er">to</span> <span class="er">mark</span> <span class="er">service</span> <span class="er">as</span> <span class="er">external</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;requests&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;20&quot;</span><span class="fu">,</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;200&quot;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="example-2-one-service-with-two-methods-offered-over-udp">Example
+2: One service with two methods offered over UDP</h3>
+<ul>
+<li>The service is hosted on IP: 192.168.1.9.</li>
+<li>The service is offered on port 30509 via UDP.</li>
+<li>The service has the ID 0x1000</li>
+<li>The method has the ID 0x0001</li>
+<li>The second method has the ID 0x0002</li>
+<li>The client accesses the service from IP: 192.168.1.77</li>
+</ul>
+<h4 id="service-side-1">Service side</h4>
+<ul>
+<li>Debounce time for responses should have a:
+<ul>
+<li>debounce time of 10 milliseconds for method 0x1001 and 20 for
+0x1002</li>
+<li>maximum retention time of 100 milliseconds for method 0x1001 and 200
+for 0x1002</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;responses&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;10&quot;</span><span class="fu">,</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;100&quot;</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">},</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1002&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;20&quot;</span><span class="fu">,</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;200&quot;</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="client-side-1">Client side</h4>
+<ul>
+<li>Debounce time for requests to the service on 192.168.1.9 should have
+a:
+<ul>
+<li>debounce time of 20 milliseconds for method 0x1001 and 40 for
+0x1002</li>
+<li>maximum retention time of 200 milliseconds for method 0x1001 and 400
+for 0x1002</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.77&quot;</span><span class="fu">,</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span> <span class="er">//</span> <span class="er">required</span> <span class="er">to</span> <span class="er">mark</span> <span class="er">service</span> <span class="er">as</span> <span class="er">external</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;requests&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;20&quot;</span><span class="fu">,</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;200&quot;</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">},</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1002&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;40&quot;</span><span class="fu">,</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;400&quot;</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3
+id="example-3-one-service-with-one-method-offered-over-udp-and-tcp">Example
+3: One service with one method offered over UDP and TCP</h3>
+<ul>
+<li>The service is hosted on IP: 192.168.1.9.</li>
+<li>The service is offered on port 30509 via UDP.</li>
+<li>The service is offered on port 30510 via TCP.</li>
+<li>The service has the ID 0x1000</li>
+<li>The method has the ID 0x0001</li>
+<li>The client accesses the service from IP: 192.168.1.77</li>
+</ul>
+<h4 id="service-side-2">Service side</h4>
+<ul>
+<li>Debounce time for responses should have a:
+<ul>
+<li>debounce time of 10 milliseconds</li>
+<li>maximum retention time of 100 milliseconds</li>
+<li>TCP should use the same settings as UDP</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;reliable&quot;</span><span class="fu">:</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;port&quot;</span><span class="fu">:</span><span class="st">&quot;30510&quot;</span><span class="fu">,</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;enable-magic-cookies&quot;</span><span class="fu">:</span><span class="st">&quot;false&quot;</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">},</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;responses&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;10&quot;</span><span class="fu">,</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;100&quot;</span><span class="fu">,</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="client-side-2">Client side</h4>
+<ul>
+<li>Debounce time for requests to the service on 192.168.1.9 should have
+a:
+<ul>
+<li>debounce time of 20 milliseconds</li>
+<li>maximum retention time of 200 milliseconds</li>
+<li>TCP should use the same settings as UDP</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.77&quot;</span><span class="fu">,</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x0001&quot;</span><span class="fu">,</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.1.9&quot;</span><span class="fu">,</span> <span class="er">//</span> <span class="er">required</span> <span class="er">to</span> <span class="er">mark</span> <span class="er">service</span> <span class="er">as</span> <span class="er">external</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;30509&quot;</span><span class="fu">,</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;reliable&quot;</span><span class="fu">:</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;port&quot;</span><span class="fu">:</span><span class="st">&quot;30510&quot;</span><span class="fu">,</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;enable-magic-cookies&quot;</span><span class="fu">:</span><span class="st">&quot;false&quot;</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>            <span class="fu">},</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;debounce-times&quot;</span><span class="fu">:</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;requests&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">&quot;0x1001&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;debounce-time&quot;</span><span class="fu">:</span><span class="st">&quot;20&quot;</span><span class="fu">,</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">&quot;maximum-retention-time&quot;</span><span class="fu">:</span><span class="st">&quot;200&quot;</span><span class="fu">,</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">}</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>                <span class="fu">}</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h1 id="someip-tp">SOME/IP TP</h1>
+<p>With SOME/IP Transport Protocol (TP) it is possible to transport
+messages which exceed the UDP payload size limit of 1400 byte. If
+enabled the message is segmented and send in multiple UDP datagrams.</p>
+<p>Example configuration:</p>
+<ul>
+<li>Service 0x1111/0x1 is hosted on 192.168.0.1 on UDP port 40000</li>
+<li>Client is running on 192.168.0.100</li>
+<li>The service has two methods with ID: 0x1 and 0x2 which require large
+requests and large responses. Additionally the service offers a field
+with ID 0x8001 which requires a large payloads as well.</li>
+<li>The maximum payload size on service side should be limited to 5000
+bytes.</li>
+</ul>
+<p>Configuration service side:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.0.1&quot;</span><span class="fu">,</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x1&quot;</span><span class="fu">,</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;40000&quot;</span><span class="fu">,</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;someip-tp&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;service-to-client&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;0x1&quot;</span><span class="ot">,</span> <span class="st">&quot;0x2&quot;</span><span class="ot">,</span> <span class="st">&quot;0x8001&quot;</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>                <span class="ot">]</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;max-payload-size-unreliable&quot;</span> <span class="fu">:</span> <span class="st">&quot;5000&quot;</span><span class="fu">,</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Configuration client side:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.0.100&quot;</span><span class="fu">,</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logging&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">},</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;applications&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span> <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;services&quot;</span><span class="fu">:</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;service&quot;</span><span class="fu">:</span><span class="st">&quot;0x1000&quot;</span><span class="fu">,</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;instance&quot;</span><span class="fu">:</span><span class="st">&quot;0x1&quot;</span><span class="fu">,</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unicast&quot;</span><span class="fu">:</span><span class="st">&quot;192.168.0.1&quot;</span><span class="fu">,</span> <span class="er">//</span> <span class="er">required</span> <span class="er">to</span> <span class="er">mark</span> <span class="er">service</span> <span class="er">as</span> <span class="er">external</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;unreliable&quot;</span><span class="fu">:</span><span class="st">&quot;40000&quot;</span><span class="fu">,</span> <span class="er">//</span> <span class="er">required</span> <span class="er">to</span> <span class="er">mark</span> <span class="er">service</span> <span class="er">as</span> <span class="er">external</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;someip-tp&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;client-to-service&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;0x1&quot;</span><span class="ot">,</span> <span class="st">&quot;0x2&quot;</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>                <span class="ot">]</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;routing&quot;</span><span class="fu">:</span><span class="st">&quot;[...]&quot;</span><span class="fu">,</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;service-discovery&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">[...]</span> <span class="fu">}</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h1 id="tools">Tools</h1>
+<h2 id="vsomeip_ctrl">vsomeip_ctrl</h2>
+<p><code>vsomeip_ctrl</code> is a small utility which can be used to
+send SOME/IP messages from the commandline. If a response arrives within
+5 seconds the response will be printed.</p>
+<ul>
+<li>It can be build via <code>vsomeip_ctrl</code> make target
+(<code>make vsomeip_ctrl</code>).</li>
+<li>The instance id of the target service has to be passed in
+hexadecimal notation.</li>
+<li>The complete message has to be passed in hexadecimal notation.</li>
+<li>See the <code>--help</code> parameter for available options.</li>
+<li>If <code>vsomeip_ctrl</code> is used to send messages to a remote
+service and no <code>routingmanagerd</code> is running on the local
+machine, make sure to pass a json configuration file where
+<code>vsomeip_ctrl</code> is set as routing manager via environment
+variable.</li>
+<li>If <code>vsomeip_ctrl</code> is used to send messages to a local
+service and no <code>routingmanagerd</code> is running on the local
+machine, make sure to use the same json configuration file as the local
+service.</li>
+</ul>
+<p>Example: Calling method with method id 0x80e8 on service with service
+id 0x1234, instance id 0x5678:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./vsomeip_ctrl</span> <span class="at">--instance</span> 5678 <span class="at">--message</span> 123480e800000015134300030100000000000009efbbbf576f726c6400</span></code></pre></div>
+<p>Example: Sending a message to service with service id 0x1234,
+instance id 0x5678 and method id 0x0bb8 via TCP</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./vsomeip_ctrl</span> <span class="at">--tcp</span> <span class="at">--instance</span> 5678 <span class="at">--message</span> 12340bb8000000081344000101010000</span></code></pre></div>

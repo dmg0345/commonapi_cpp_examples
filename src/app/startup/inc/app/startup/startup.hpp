@@ -2,14 +2,14 @@
  ***********************************************************************************************************************
  * @file        startup.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        28-12-2024 15:28:40 (UTC)
- * @version     0.0.1
+ * @date        03-01-2025 22:07:48 (UTC)
+ * @version     0.0.2
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
 
-#ifndef APP_STARTUP_HPP
-#define APP_STARTUP_HPP
+#ifndef LAPP_CSTARTUP_HPP
+#define LAPP_CSTARTUP_HPP
 
 #include "utils/error/error.hpp"
 
@@ -40,6 +40,6 @@ Utils::Error::Error main(void);
 int main(void);
 #endif
 
-#endif /* APP_STARTUP_HPP */
+#endif /* LAPP_CSTARTUP_HPP */
 
 /******************************************************************************************************END OF FILE*****/

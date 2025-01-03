@@ -2,14 +2,14 @@
  ***********************************************************************************************************************
  * @file        error.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        28-12-2024 15:28:40 (UTC)
- * @version     0.0.1
+ * @date        03-01-2025 22:07:48 (UTC)
+ * @version     0.0.2
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
 
-#ifndef UTILS_ERROR_HPP
-#define UTILS_ERROR_HPP
+#ifndef LUTILS_CERROR_HPP
+#define LUTILS_CERROR_HPP
 
 #include <cstdint>
 
@@ -48,7 +48,11 @@ enum class CID : uint32_t
 {
     None = 0U, /**< No component identifier. */
     Error, /**< Error component identifier. */
-    Version /**< Version component identifier. */
+    Version, /**< Version component identifier. */
+    CommonAPI, /**< Common API, also known as 'capi', component identifier. */
+    Startup, /**< Startup component identifier. */
+    Client, /**< Client component identifier. */
+    Server /**< Server component identifier. */
 };
 
 /**
@@ -181,6 +185,6 @@ enum class Error : uint32_t
 
 }
 
-#endif /* UTILS_ERROR_HPP */
+#endif /* LUTILS_CERROR_HPP */
 
 /******************************************************************************************************END OF FILE*****/
