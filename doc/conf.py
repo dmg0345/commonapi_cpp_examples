@@ -29,7 +29,7 @@ author = "Diego Martínez García <dmg0345@gmail.com>"
 # Project copyright.
 copyright = author
 # Project version.
-version = "0.0.0"
+version = "0.0.2"
 # Project release, set it as the same value as version as the separation is not required.
 release = version
 
