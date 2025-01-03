@@ -7,7 +7,6 @@
 #    - https://stackoverflow.com/questions/17597673/cmake-preload-script-for-cache
 
 ## Configuration variables #############################################################################################
-set(CFG_LIB_BUILD_TYPE "STATIC" CACHE STRING "" FORCE)
 set(CFG_TAG "OFF" CACHE STRING "" FORCE)
 set(CFG_TESTS_ENABLE_COVERAGE "ON" CACHE STRING "" FORCE)
 set(CFG_TESTS_ENABLE_SANITIZERS "ON" CACHE STRING "" FORCE)

@@ -1,0 +1,4 @@
+# Disable clang-tidy checks on Common API C++ Generated files.
+
+Checks: -*
+InheritParentConfig: true

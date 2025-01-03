@@ -1,0 +1,25 @@
+/**
+ ***********************************************************************************************************************
+ * @file        app.dbus.fdepl
+ * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
+ * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
+ * @version     ${PROJECT_VERSION}
+ * @copyright   ${PROJECT_COPYRIGHT}
+ * @verbatim
+ * Common API C++ DBus Franca Deployment file, for details about this file refer to:
+ *   - CommonAPPICppUserGuide, section 2.6.3 CommonAPI Deployment.
+ *   - CommonAPI-4_deployment_spec.fdepl file, with the formal specification.
+ *   - CommonAPIDBusCppUserGuide, section 2.7.2 Deployment.
+ *   - CommonAPI-4-DBus_deployment_spec.fdepl file, with the formal specification.
+ * @endverbatim
+ ***********************************************************************************************************************
+ */
+
+import "platform:/plugin/org.genivi.commonapi.dbus/deployment/CommonAPI-4-DBus_deployment_spec.fdepl"
+import "app.fidl"
+
+define org.genivi.commonapi.dbus.deployment for interface commonapi.app.App {
+
+}
+
+/******************************************************************************************************END OF FILE*****/

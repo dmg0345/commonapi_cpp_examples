@@ -2,12 +2,14 @@
 # This file tags all the application, library and test files with data such as the project author and timestamps.
 ########################################################################################################################
 
-# Collect all '.c', '.cpp', '.h' and '.hpp' files from relevant folders for tagging.
+# Collect all '.fidl', '.cpp', '.fdepl' and '.hpp' files from relevant folders for tagging.
 file(GLOB_RECURSE PROJECT_SOURCE_FILES
     "${PROJECT_ROOT_DIR}/src/*.cpp"
     "${PROJECT_ROOT_DIR}/src/*.hpp"
     "${PROJECT_ROOT_DIR}/tests/tests/*.cpp"
     "${PROJECT_ROOT_DIR}/tests/tests/*.hpp"
+    "${PROJECT_ROOT_DIR}/third_party/*.fidl"
+    "${PROJECT_ROOT_DIR}/third_party/*.fdepl"
 )
 
 # Check if tagging filenames only.

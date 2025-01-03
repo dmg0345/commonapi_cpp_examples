@@ -8,8 +8,8 @@
  ***********************************************************************************************************************
  */
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef LUTILS_HPP
+#define LUTILS_HPP
 
 /**
  * @brief Utils namespace.
@@ -20,6 +20,6 @@
 namespace Utils
 { }
 
-#endif /* UTILS_HPP */
+#endif /* LUTILS_HPP */
 
 /******************************************************************************************************END OF FILE*****/

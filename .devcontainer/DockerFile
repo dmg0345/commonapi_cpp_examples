@@ -16,7 +16,13 @@ SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference
 #   - https://askubuntu.com/questions/875213/apt-get-to-retry-downloading (apt-get retries)
 # It is possible that the Dockerfile breaks over time at this point as packages might be deprecated and not exist
 # anymore when updates or upgrades are released, in this scenario, the package versions will need to be updated.
+# 
+# For details about the dependencies related to COVESA / GENIVI Common API C++ Generators, refer to:
+#   - https://unix.stackexchange.com/a/749907
+#   - https://stackoverflow.com/a/19654699
 RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                                                          \
+    Invoke-WebRequest "http://www.mirbsd.org/~tg/Debs/sources.txt/wtf-bookworm.sources" -OutFile "./out.sources";      \
+    Move-Item -Path "./out.sources" -Destination "/etc/apt/sources.list.d/wtf-bookworm.sources" -Force;                \
     apt-get --assume-yes update;                                                                                       \
     apt-get --assume-yes upgrade;                                                                                      \
     apt-get --assume-yes --show-progress install                                                                       \
@@ -41,16 +47,37 @@ RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                   
     python3-pip=23.0.1+dfsg-1                                                                                          \
     python3-venv=3.11.2-1+b1                                                                                           \
                                                                                                                        \
+    ## COVESA / GENIVI Common API C++ Generators #######################################################################
+    maven=3.8.7-1                                                                                                      \
+    openjdk-8-jdk-headless                                                                                             \
+    openjdk-8-jre-headless                                                                                             \
+                                                                                                                       \
+    ## COVESA / GENIVI Common API C++ Runtimes and Libraries ###########################################################
+    patchelf                                                                                                           \
+    pkg-config                                                                                                         \
+    iproute2                                                                                                           \
+    libdlt2=2.18.8-6                                                                                                   \
+    libdlt-dev=2.18.8-6                                                                                                \
+    libdbus-1-dev=1.14.10-1~deb12u1                                                                                    \
+    libboost1.81-dev=1.81.0-5+deb12u1                                                                                  \
+    libboost-system1.81-dev=1.81.0-5+deb12u1                                                                           \
+    libboost-thread1.81-dev=1.81.0-5+deb12u1                                                                           \
+    libboost-fileSystem1.81-dev=1.81.0-5+deb12u1                                                                       \
+    libsystemd-dev=252.31-1~deb12u1                                                                                    \
+                                                                                                                       \
     ## Other ###########################################################################################################
     git=1:2.39.5-0+deb12u1                                                                                             \
-    pkg-config                                                                                                         \
     dconf-cli                                                                                                          \
     wget                                                                                                               \
     xz-utils                                                                                                           \
     locales;                                                                                                           \
                                                                                                                        \
     apt-get --assume-yes clean;                                                                                        \
-    apt-get --assume-yes autoremove;
+    apt-get --assume-yes autoremove;                                                                                   \
+    Remove-Item "/etc/apt/sources.list.d/wtf-bookworm.sources";
+
+# Create the JAVA_HOME environment variable, so that proper version is used system wide.
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 
 # Download the NET Runtime, necessary for the 'josetr.cmake-language-support-vscode' extension, for details refer to:
 #   - https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
@@ -115,19 +142,6 @@ RUN New-Item -ItemType Directory -Path "/root/.fluxbox/styles" -Force;          
     Remove-Item "/other" -Force -Recurse;
 
 ## CommonAPI C++ Tools #################################################################################################
-
-# Install the dependencies required to build the CommonAPI C++ tooling, for details refer to:
-#   - https://unix.stackexchange.com/a/749907
-#   - https://stackoverflow.com/a/19654699
-RUN wget "http://www.mirbsd.org/~tg/Debs/sources.txt/wtf-bookworm.sources" -O "./wtf-bookworm.sources";                \
-    Move-Item -Path "./wtf-bookworm.sources" -Destination "/etc/apt/sources.list.d/wtf-bookworm.sources" -Force;       \
-    apt-get --assume-yes update;                                                                                       \
-    apt-get --assume-yes --show-progress install maven=3.8.7-1 openjdk-8-jdk-headless openjdk-8-jre-headless;          \
-    apt-get --assume-yes clean;                                                                                        \
-    apt-get --assume-yes autoremove;                                                                                   \
-    Remove-Item "/etc/apt/sources.list.d/wtf-bookworm.sources";
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-
 # Build and install CommonAPI C++ Core, D-Bus and SOME/IP tools, for reference, refer to the following links:
 #   - Core: https://github.com/COVESA/capicxx-core-tools/tree/3.2.15
 #   - D-Bus: https://github.com/COVESA/capicxx-dbus-tools/tree/3.2.15
@@ -179,27 +193,13 @@ ENV CAPICPP_DBUS_TOOLS_DIR="/usr/local/capicpp/dbus-tools"
 ENV CAPICPP_SOMEIP_TOOLS_DIR="/usr/local/capicpp/someip-tools"
 
 ## CommonAPI C++ Runtimes ##############################################################################################
-
-# Install the dependencies required to build the CommonAPI C++ runtimes, for details refer to:
-#   - Automotive DLT package sources: https://github.com/COVESA/dlt-daemon
-#   - Automotive DLT debian package: https://packages.debian.org/bookworm/libdlt-dev
-RUN apt-get --assume-yes update;                                                                                       \
-    apt-get --assume-yes --show-progress install                                                                       \
-        libdlt2=2.18.8-6                                                                                               \
-        libdlt-dev=2.18.8-6                                                                                            \
-        libboost1.81-dev=1.81.0-5+deb12u1                                                                              \
-        libboost-system1.81-dev=1.81.0-5+deb12u1                                                                       \
-        libboost-thread1.81-dev=1.81.0-5+deb12u1                                                                       \
-        libboost-fileSystem1.81-dev=1.81.0-5+deb12u1                                                                   \
-        libsystemd-dev=252.31-1~deb12u1;                                                                               \
-    apt-get --assume-yes clean;                                                                                        \
-    apt-get --assume-yes autoremove;
-
 # Build and install CommonAPI C++ Core, D-Bus and SOME/IP runtimes, for reference, refer to the following links:
 #   - Core: https://github.com/COVESA/capicxx-core-tools/tree/3.2.15
 #   - D-Bus: https://github.com/COVESA/capicxx-dbus-tools/tree/3.2.15
+#     - Patch ELF RPATH to link with patched D-Bus library: https://stackoverflow.com/a/54723461
 #   - SOME/IP: https://github.com/COVESA/capicxx-someip-runtime/tree/3.2.4
 #     - vsomeip: https://github.com/COVESA/vsomeip/tree/3.5.3
+#   - Shared libraries configuration: https://stackoverflow.com/a/13428971
 RUN                                                                                                                    \
     ## Build and install CommonAPI C++ Core Runtime ####################################################################
     git clone --depth 1 -b "3.2.4" "https://github.com/COVESA/capicxx-core-runtime.git" "/core-runtime";               \
@@ -254,6 +254,14 @@ RUN                                                                             
     cmake --build "./.cmake_build" --target all;                                                                       \
     cmake --build "./.cmake_build" --target install;                                                                   \
     Pop-Location;                                                                                                      \
+    ## Set dynamic link paths and configuration ########################################################################
+    $contents = "/usr/local/capicpp/core-runtime/lib" + "`n";                                                          \
+    $contents += "/usr/local/capicpp/dbus-runtime/lib" + "`n";                                                         \
+    $contents += "/usr/local/capicpp/vsomeip/lib" + "`n";                                                              \
+    $contents += "/usr/local/capicpp/someip-runtime/lib" + "`n";                                                       \
+    Set-Content -Path '/etc/ld.so.conf.d/capicpp.conf' -Force -Value "$($contents)" -Encoding utf8;                    \
+    patchelf --set-rpath '$ORIGIN/../../dbus-patched/lib' '/usr/local/capicpp/dbus-runtime/lib/libCommonAPI-DBus.so';  \
+    ldconfig;                                                                                                          \
     ## Cleanup #########################################################################################################
     Remove-Item "/core-runtime" -Force -Recurse;                                                                       \
     Remove-Item "/dbus-runtime" -Force -Recurse;                                                                       \

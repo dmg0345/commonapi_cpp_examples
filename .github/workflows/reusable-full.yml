@@ -117,7 +117,6 @@ jobs:
               --exclude="*.o" `
               --exclude="*.pdf" `
               --exclude="$($cfg.Name)/.git" `
-              --exclude="$($cfg.Name)/src/third_party" `
               -cf "$($cfg.Name).repo.tar.gz" "$($cfg.Name)";
             if ($LastExitCode -ne 0) { throw "$($cfg.Name): Compressing the repository failed with error '$LastExitCode'." }
 
@@ -312,12 +311,18 @@ jobs:
             if ($LastExitCode -ne 0) { throw "Decompressing $cfg failed with error '$LastExitCode'." }
             Push-Location "$cfg";
 
+            # Bring up resources for Common API C++ bindings.
+            ./manage.ps1 "commonapi-up";
+
             # Run tests, if the tests finish in error, then raise it.
             ctest --extra-verbose --output-log "$ENV:TESTS_HTML_FOLDER/output.log" --no-tests=error --test-dir "$ENV:CMAKE_FOLDER";
             if ($LastExitCode -ne 0)
             {
                 throw "The execution of the tests for '$cfg' finished with error '$LastExitCode'.";
             }
+
+            # Bring down resources for Common API C++ bindings.
+            ./manage.ps1 "commonapi-down";
 
             # Generate test and coverage HTML reports.
             & "./manage.ps1" test_report;

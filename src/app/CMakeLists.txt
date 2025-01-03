@@ -2,10 +2,10 @@
 add_subdirectory("startup")
 
 ## Include 'client' component ##########################################################################################
-# add_subdirectory("client")
+add_subdirectory("client")
 
 ## Include 'server' component ##########################################################################################
-# add_subdirectory("server")
+add_subdirectory("server")
 
 ## Sources #############################################################################################################
 # Collect source files of component and add them to relevant targets.
