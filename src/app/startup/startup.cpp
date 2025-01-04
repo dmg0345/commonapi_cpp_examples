@@ -20,10 +20,7 @@
 
 using Utils::Error::Error;
 
-namespace App::Startup
-{
-
-Error main(void)
+Error App::Startup::main(void)
 {
 #if defined(CAPICPP_CLIENT)
     return App::Client::main();
@@ -32,11 +29,12 @@ Error main(void)
 #endif
 }
 
-}
-
-#if !defined(DISABLE_MAIN)
-int main(void)
+#if !defined(DISABLE_MAIN) || defined(DOXYGEN)
+int main(int argc, char ** argv)
 {
+    (void)argc;
+    (void)argv;
+
     return static_cast<int>(App::Startup::main());
 }
 #endif

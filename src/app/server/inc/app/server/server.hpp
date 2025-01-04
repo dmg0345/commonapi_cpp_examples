@@ -16,9 +16,13 @@
 #include <v0/commonapi/app/AppStubDefault.hpp>
 
 /**
- * @brief Server component.
  * @rst
- * Handles the server concept of the client / server architecture in CommonAPI C++.
+ * The *server* component implements the server concept of the Common API C++ client/server architecture, it supports
+ * both D-Bus and SOME/IP runtime bindings.
+ *
+ * In this project, it implements a stub and a non-persistent storage to test the different functionalities of the
+ * Common API C++ framework, refer to the :any:`application <::App>` for details of how it fits with the rest of the
+ * architecture.
  * @endrst
  */
 namespace App::Server

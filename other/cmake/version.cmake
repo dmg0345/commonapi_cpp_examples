@@ -121,7 +121,6 @@ constexpr const char * const VERSION = \"${PROJECT_VERSION}\";
  * ${PROJECT_VCS_HASH}
  * @endrst
  * @note The hash is enclosed in @e +++ characters if the project was built with uncommited changes.
- * @private
  */
 constexpr const char * const COMMIT_HASH = \"${PROJECT_VCS_HASH}\";
 
@@ -129,7 +128,6 @@ constexpr const char * const COMMIT_HASH = \"${PROJECT_VCS_HASH}\";
  * @rst
  * ${PROJECT_VCS_TAG}
  * @endrst
- * @private
  */
 constexpr const char * const TAG = \"${PROJECT_VCS_TAG}\";
 
@@ -137,7 +135,6 @@ constexpr const char * const TAG = \"${PROJECT_VCS_TAG}\";
  * @rst
  * ${PROJECT_VCS_BRANCH}
  * @endrst
- * @private
  */
 constexpr const char * const BRANCH = \"${PROJECT_VCS_BRANCH}\";
 
@@ -145,7 +142,6 @@ constexpr const char * const BRANCH = \"${PROJECT_VCS_BRANCH}\";
  * @rst
  * ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @endrst
- * @private
  */
 constexpr const char * const BUILD_TIMESTAMP_UTC = \"${PROJECT_BUILD_TIMESTAMP_UTC}\";
 

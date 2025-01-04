@@ -14,19 +14,33 @@
 #include "priv/googletest.hpp"
 
 /**
- * @brief Tests namespace.
+ * @rst
+ * Root namespace with all the tests utilities and test suites for the project.
  *
- * Root namespace for all the tests and testing utilities and definitions.
+ * For more information about the tests, refer to the *tests* folder in the repository.
+ * @endrst
  */
 namespace Tests
 { }
 
 /**
- * @brief Test utilities namespace.
+ * @rst
+ * Test utils not specific to a test or test suite and which can be used accross the different tests.
  *
- * Testing utilities for the tests.
+ * For more information about the test utilities, refer to the *tests/test_utils* folder in the repository.
+ * @endrst
  */
 namespace Tests::Utils
+{ }
+
+/**
+ * @rst
+ * The tests are part of test suites, and test suites are all are part of this namespace.
+ *
+ * The implementation of the test suites can be found in the *tests/tests* folder in the repository.
+ * @endrst
+ */
+namespace Tests::Suites
 { }
 
 #endif /* TEST_UTILS_HPP */

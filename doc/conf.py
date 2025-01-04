@@ -17,6 +17,7 @@ its XML output to be at the specified location. Relevant links for documentation
 import sphinx
 import subprocess
 import os
+import docutils
 import xml.etree.ElementTree as ET
 
 ## Project information #################################################################################################
@@ -98,6 +99,18 @@ html_baseurl = ""
 html_logo = None
 # Path to the HTML fav icon.
 html_favicon = None
+# Paths to static files and folders, will be stored in '_static' folder.
+html_static_path = [
+    "../other/commonapi_docs/FrancaUserGuide-0.12.0.1.pdf",
+    "../other/commonapi_docs/CommonAPICppSpecification.pdf",
+    "../other/commonapi_docs/CommonAPICppUserGuide.pdf",
+    "../other/commonapi_docs/CommonAPI-4_deployment_spec.fdepl",
+    "../other/commonapi_docs/dbus/CommonAPI-4-DBus_deployment_spec.fdepl",
+    "../other/commonapi_docs/dbus/CommonAPIDBusCppUserGuide.pdf",
+    "../other/commonapi_docs/someip/CommonAPI-4-SOMEIP_deployment_spec.fdepl",
+    "../other/commonapi_docs/someip/CommonAPISomeIPCppUserGuide.pdf",
+    "../other/commonapi_docs/someip/vsomeipUserGuide.html"
+]
 # Add permalinks to every section.
 html_permalinks = True
 # Do not include the original sources in the final documentation.
@@ -174,43 +187,55 @@ def breathe_load_tags_on_doxyfile() -> None:
     if len(elems) == 1:
         _ = [tags.add(tag.text) for tag in elems[0] if tag.text.isidentifier()]
 
-def on_missing_reference(_app: sphinx.application.Sphinx,
-                         _env: sphinx.app.builder.env,
+def on_missing_reference(app: sphinx.application.Sphinx,
+                         env: sphinx.environment.BuildEnvironment,
                          node: sphinx.addnodes.pending_xref,
-                         contnode: sphinx.addnodes.pending_xref):
-    """Handler for 'on_missing_reference' warning. Lots of false positives can be raised by Sphinx from this, for
+                         contnode: docutils.nodes.TextElement) -> docutils.nodes.reference | None:
+    """Handler for 'missing-reference' warning. Lots of false positives can be raised by Sphinx from this, for
     example from missing references to standard library types or missing references to third-party types that are not
     documented by Sphinx or which are not processed by Doxygen.
 
-    One solution is to disable errors as warnings, but this is not convenient as it could hide real errors.
+    One solution is to disable errors as warnings, but this is not convenient as it could hide real errors. Another
+    solution implies the use of 'c_extra_keywords' and 'c_id_attributes', however, this also causes other kind of
+    errors. Thus the solution to handle the event directly.
 
-    The implementation of this handler here allows to ignore warnings for the types specified."""
+    The implementation of this handler allows to ignore this kind of warnings and also to look for substitue
+    nodes when a reference has not been found."""
     # Print missing reference in color in the terminal to differentiate it.
-    # print(f"\033[93m mon_missing_reference: {node}.\033[00m")
+    print(f"\033[93m on_missing_reference: {node}.\033[00m")
 
-    # Missing references handler, lots of false positives can occur in the C/C++ domain.
-    # Trying to handle them with 'c_extra_keywords' or 'c_id_attributes' generates other kind of errors.
-    # Allowed reference domains, reference targets and reference types that can be missing are described below.
-    refdomains = ["c", "cpp"]
-    reftypes = ["identifier"]
-    
-    # C Standard library identifiers to ignore.
-    c_std_reftargets = []
+    # The lookup dictionary with missing targets and replacements.
+    reftargets = {
+        "c": {
 
-    # C++ Standard library identifiers to ignore.
-    cpp_std_reftargets = ["size_t"]
+        },
+        "cpp": {
+            "*": {
+                "size_t": None, "uint32_t": None,
+                "v0_1": None, "v0_1::commonapi": None, "v0_1::commonapi::app": None, "v0_1::commonapi::app::AppStubDefault": None
+            }
+        }
+    }
 
-    # Build total reftargets.
-    reftargets = [
-        *c_std_reftargets,
-        *cpp_std_reftargets
-    ]
+    # Obtain the reference target replacement, if any, note that refdoc replacements take priority over global ones.
+    domain_dict = reftargets.get(node["refdomain"], {})
+    reftarget = {**domain_dict.get("*", {}), **domain_dict.get(node["refdoc"], {})}.get(node["reftarget"], False)
 
-    # Check if the reference is of C/C++ type and it can be allowed to be missing.
-    if all((node["refdomain"] in refdomains, node["reftarget"] in reftargets, node["reftype"] in reftypes)):
-        # Return OK in Sphinx.
-        return contnode
-    # Raise error in Sphinx.
+    # Check if the replacement target has been found and the node refers to an identifier.
+    if all([node["reftype"] == "identifier", reftarget is not False]):
+        # No explicit replacement for target, thus acknowledge warning and continue with node as is.
+        if reftarget is None:
+            return contnode
+
+        # Find explicit replacement for target, and ensure there is no ambiguity.
+        reftarget_cand = env.domains[node["refdomain"]].resolve_any_xref(
+            env, './index', app.builder, reftarget, node, contnode
+        )
+        if len(reftarget_cand) != 1:
+            raise sphinx.errors.ExtensionError(f"Found {len(reftarget_cand)} '{reftarget}' replacements for '{node['reftarget']}'.")
+        return reftarget_cand[0][1]
+
+    # Could not resolve identifier, let other handlers resolve it if they can.
     return None
 
 def setup(app: sphinx.application.Sphinx):

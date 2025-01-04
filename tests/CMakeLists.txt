@@ -9,13 +9,13 @@ function(define_test_suite TEST_SUITE_NAME)
 
     # Add additional test utilities.
     target_sources(${TEST_SUITE_NAME} PRIVATE
-        "${PROJECT_ROOT_DIR}/tests/tests/.test_utils/test_utils.cpp"
-        "${PROJECT_ROOT_DIR}/tests/tests/.test_utils/googletest.cpp"
+        "${PROJECT_ROOT_DIR}/tests/tests/test_utils/test_utils.cpp"
+        "${PROJECT_ROOT_DIR}/tests/tests/test_utils/googletest.cpp"
     )
 
     # Add include directories to the test utilities.
     target_include_directories(${TEST_SUITE_NAME} PRIVATE
-        "${PROJECT_ROOT_DIR}/tests/tests/.test_utils/inc"
+        "${PROJECT_ROOT_DIR}/tests/tests/test_utils/inc"
     )
 
     # Set installation runtime directories.

@@ -12,9 +12,15 @@
 #define LUTILS_HPP
 
 /**
- * @brief Utils namespace.
  * @rst
- * Different kinds of utilities to be used accross the codebase.
+ * The utils layer contains different types of components of generic nature and not necessarily linked between each
+ * other and which are intended to be used accross the codebase.
+ *
+ * These components are enumerated below. Click on a specific component to obtain more details.
+ *
+ * - :doc:`capi`
+ * - :doc:`error`
+ * - :doc:`version`
  * @endrst
  */
 namespace Utils

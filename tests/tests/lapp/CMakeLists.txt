@@ -2,9 +2,10 @@
 define_test_suite(test_lapp_dbus)
 define_test_suite(test_lapp_someip)
 
-# Link libraries for test suite, one for DBus binding and the other one for SomeIP binding.
-target_link_libraries(test_lapp_dbus PRIVATE capicpp_core_proxy capicpp_core_skel)
-target_link_libraries(test_lapp_someip PRIVATE capicpp_core_proxy capicpp_core_skel)
+# Link libraries for test suites.
+foreach_target(TARGETS test_lapp_dbus test_lapp_someip FN target_link_libraries
+    PRIVATE capicpp_core_proxy capicpp_core_skel
+)
 
 # Set proper environment variables for test suite that uses DBus binding.
 string(CONCAT ENVIRONMENT_STR
@@ -29,6 +30,10 @@ set_tests_properties(test_lapp_someip PROPERTIES
     ENVIRONMENT "${ENVIRONMENT_STR}"
     WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
+
+# Add different compile definitions for each target.
+target_compile_definitions(test_lapp_dbus PRIVATE "TEST_LAPP_MODE_DBUS")
+target_compile_definitions(test_lapp_someip PRIVATE "TEST_LAPP_MODE_SOMEIP")
 
 ## Code Under Test sources and includes ################################################################################
 foreach_target(TARGETS test_lapp_dbus test_lapp_someip FN target_sources 

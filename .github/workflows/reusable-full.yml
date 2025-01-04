@@ -78,6 +78,49 @@ jobs:
           ref: ${{ github.sha }}
           path: ${{ env.CLONE_FOLDER }}
           submodules: recursive
+      - name: Tag commit on production
+        run: |
+          # Enter folder with repository.
+          Push-Location "$($ENV:CLONE_FOLDER)";
+
+          # Get current version from configuration file.
+          $confFile = Get-Content "./doc/conf.py" -Encoding utf8 -Raw;
+          $confMatch = $confFile -Match 'version[\s]*=[\s]*"([0-9]+\.[0-9]+\.[0-9]+)"[\s]*';
+          if ($confMatch -eq $false) { throw "Unable to retrieve version from configuration file..."; }
+          $currVersion = $Matches[1];
+
+          # Attempt to tag only on 'production' kind of deployments.
+          if ('${{ inputs.deploy }}' -eq "production")
+          {
+            # Fetch all tags from remote.
+            git fetch --tags --force;
+            if ($LastExitCode -ne 0) { throw "Unable to fetch tags from repository."; }
+
+            # Check if current commit is already tagged, in which case skip it.
+            $out = git tag -l -n0 --points-at "${{ github.sha }}";
+            if ($LastExitCode -ne 0) { throw "Unable to determine if current commit is tagged."; }
+            if ($out.Length -eq 0)
+            {
+                $out = git tag -l -n0 "$currVersion";
+                if ($LastExitCode -ne 0) { throw "Unable to determine if tag exists for version."; }
+                if ($out.Length -ne 0) { throw "Version '$out' is already tagged."; }
+
+                # Create tag locally for documentation and other purposes, do not push, would need perms.
+                git tag "$currVersion" "${{ github.sha }}";
+                if ($LastExitCode -ne 0) { throw "Unable to create tag '$currVersion' for '${{ github.sha }}'"; }
+            }
+            else
+            {
+              Write-Host "Commit '${{ github.sha }}' is already tagged...";
+            }
+          }
+          else
+          {
+            Write-Host "No tagging necessary for '${{ inputs.deploy }}' deployment...";
+          }
+
+          # Return to original folder.
+          Pop-Location;
       - name: Build every target with CMake
         run: |
           # Enter Python virtual environment.
@@ -115,7 +158,6 @@ jobs:
             tar `
               --exclude="*.obj" `
               --exclude="*.o" `
-              --exclude="*.pdf" `
               --exclude="$($cfg.Name)/.git" `
               -cf "$($cfg.Name).repo.tar.gz" "$($cfg.Name)";
             if ($LastExitCode -ne 0) { throw "$($cfg.Name): Compressing the repository failed with error '$LastExitCode'." }
