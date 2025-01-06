@@ -8,16 +8,15 @@
  ***********************************************************************************************************************
  */
 
-/* Define to prevent recursive inclusion -----------------------------------------------------------------------------*/
 #ifndef LUTILS_CVERSION_HPP
 #define LUTILS_CVERSION_HPP
 
 #include "priv/info.hpp"
 
 /**
- * @brief Version namespace.
- *
- * Provides versioning information of a build.
+ * @rst
+ * Provides versioning values that unequivocally identify the build this documentation was generated for.
+ * @endrst
  */
 namespace Utils::Version
 { }

@@ -14,9 +14,13 @@
 #include "utils/error/error.hpp"
 
 /**
- * @brief Client component.
  * @rst
- * Handles the client concept of the client / server architecture in CommonAPI C++.
+ * The *client* component implements the client concept of the Common API C++ client/server architecture, it supports
+ * both D-Bus and SOME/IP runtime bindings.
+ *
+ * In this project, it implements request methods and non-persistent storage to test the different functionalities of
+ * the Common API C++ framework, refer to the :any:`application <::App>` for details of how it fits with the rest of the
+ * architecture.
  * @endrst
  */
 namespace App::Client

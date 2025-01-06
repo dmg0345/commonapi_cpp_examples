@@ -18,14 +18,13 @@
 
 using Utils::Error::Error;
 
-namespace App::Server
-{
+App::Server::AppStubImpl::AppStubImpl() { }
 
-AppStubImpl::AppStubImpl() { }
+App::Server::AppStubImpl::~AppStubImpl() { }
 
-AppStubImpl::~AppStubImpl() { }
-
-void AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client, std::string name, sayHelloReply_t reply)
+void App::Server::AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client,
+                                        std::string name,
+                                        sayHelloReply_t reply)
 {
     (void)client;
 
@@ -35,9 +34,9 @@ void AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client, st
     std::cout << "sayHello('" << name << "'): '" << messageStream.str() << "'\n";
 
     reply(messageStream.str());
-};
+}
 
-Error main(void)
+Error App::Server::main(void)
 {
     CommonAPI::Runtime::setProperty("LogContext", "SRV");
     CommonAPI::Runtime::setProperty("LogApplication", "SRV");
@@ -68,8 +67,6 @@ Error main(void)
     }
 
     return Error::OK;
-}
-
 }
 
 /******************************************************************************************************END OF FILE*****/

@@ -25,23 +25,30 @@
 
 using namespace App::Client;
 using namespace App::Server;
-using namespace Utils::Error;
 using namespace v0::commonapi::app;
+using Utils::Error::Error;
 
-// NOLINTBEGIN(cppcoreguidelines-owning-memory)
+#if defined(TEST_LAPP_MODE_DBUS)
+#define AppTestFixture AppDBusTestFixture
+#else
+#define AppTestFixture AppSomeIPTestFixture
+#endif
 
-namespace Tests::App
-{
+// NOLINTBEGIN(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor,
+// cppcoreguidelines-special-member-functions)
 
-/**
- * @brief Test suite, instantiated for every test.
- */
+/** Test suite, instantiated for every test. */
+
 class AppTestFixture : public testing::Test
 {
 protected:
-    /**
-     * @brief Setup function, called after the constructor in every test.
-     */
+    /** Text fixture constructor, called before setup function in every test. */
+    AppTestFixture() { }
+
+    /** Test fixture destructor, called after teardown function in every test. */
+    ~AppTestFixture() override { }
+
+    /** Setup function, called after the constructor in every test. */
     void SetUp() override
     {
         // Get Common API runtime.
@@ -62,9 +69,7 @@ protected:
         }
     }
 
-    /**
-     * @brief Teardown function, called before the destructor in every test.
-     */
+    /** Teardown function, called before the destructor in every test. */
     void TearDown() override
     {
         // Unregister server.
@@ -89,42 +94,34 @@ protected:
     const std::string client_connection = "client-sample"; /**< Client Common API C++ connection. */
 };
 
-/**
- * @brief TODO: Run an example test.
- */
+/** TODO: Run an example test. */
 TEST_F(AppTestFixture, First)
 {
-    ASSERT_EQ(::Error::OK, ::Error::OK);
+    ASSERT_EQ(Error::OK, Error::OK);
 }
 
-/**
- * @brief TODO: Run an example test.
- */
+/** Run an example test. */
 TEST_F(AppTestFixture, Second)
 {
-    ASSERT_EQ(::Error::OK, ::Error::OK);
+    ASSERT_EQ(Error::OK, Error::OK);
 }
 
-/**
- * @brief TODO: Run an example test.
- */
+/** Run an example test. */
 TEST_F(AppTestFixture, Third)
 {
-    ASSERT_EQ(::Error::OK, ::Error::OK);
+    ASSERT_EQ(Error::OK, Error::OK);
 }
 
-/**
- * @brief TODO: Run an example test.
- */
+/** Run an example test. */
 TEST_F(AppTestFixture, Fourth)
 {
-    ASSERT_EQ(::Error::OK, ::Error::OK);
+    ASSERT_EQ(Error::OK, Error::OK);
 }
 
-}
+// NOLINTEND(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor,
+// cppcoreguidelines-special-member-functions)
 
-// NOLINTEND(cppcoreguidelines-owning-memory)
-
+#if !defined(DOXYGEN)
 /**
  * @brief Test runner for this suite of tests.
  * @return The result of the test runner.
@@ -137,5 +134,6 @@ int main(int argc, char ** argv)
     // Execute the test runner.
     return RUN_ALL_TESTS();
 }
+#endif
 
 /******************************************************************************************************END OF FILE*****/

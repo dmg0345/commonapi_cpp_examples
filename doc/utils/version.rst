@@ -17,3 +17,9 @@ Version
 .. doxygenvariable:: Utils::Version::VERSION
 
 .. doxygenvariable:: Utils::Version::COMMIT_HASH
+
+.. doxygenvariable:: Utils::Version::TAG
+
+.. doxygenvariable:: Utils::Version::BRANCH
+
+.. doxygenvariable:: Utils::Version::BUILD_TIMESTAMP_UTC
