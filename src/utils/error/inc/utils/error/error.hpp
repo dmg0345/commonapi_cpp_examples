@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        error.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -14,20 +14,13 @@
 #include <cstdint>
 
 /**
- * @brief Error namespace.
- *
- * Provides error definitions and error management and handling functionality.
- *
- * To add an error, add the layer identifier to @c LID, add the component identifier to @c CID and define the error
- * in @c Error with an error identifier.
+ * @rst
+ * Provides error definitions and error management functionality.
+ * @endrst
  */
 namespace Utils::Error
 {
 
-/**
- * @brief Internal definitions.
- * @private
- */
 namespace
 {
 
@@ -83,7 +76,7 @@ enum class Error : uint32_t
 // clang-format off
 
 /**
- * @brief Triggers a @c return of when the given expression results in an error not Error::OK.
+ * @brief Triggers a @c return of when the given expression results in an error not Utils::Error::Error::OK.
  * @param[in] expr The expression.
  * @return The error returned by @p expr.
  */
@@ -99,7 +92,8 @@ enum class Error : uint32_t
     while (false)
 
 /**
- * @brief Triggers a @c return with the error specified when the given expression results in an error not Error::OK.
+ * @brief Triggers a @c return with the error specified when the given expression results in an error not
+ * Utils::Error::Error::OK.
  * @param[in] expr The expression.
  * @param[in] new_error The error to return.
  * @return The error specified in @p new_error.
@@ -131,7 +125,7 @@ enum class Error : uint32_t
     while (false)
 
 /**
- * @brief Triggers a @c goto to @c end label when the given expression results in an error not Error::OK.
+ * @brief Triggers a @c goto to @c end label when the given expression results in an error not Utils::Error::Error::OK.
  * @param[in] expr The expression.
  * @pre Requires an Error variable named @c error where to store the returned error and a @c end label.
  */
@@ -148,7 +142,7 @@ enum class Error : uint32_t
 
 /**
  * @brief Triggers a @c goto to @c end label with the error specified when the given expression results in an error
- * not Error::OK.
+ * not Utils::Error::Error::OK.
  * @param[in] expr The expression.
  * @param[in] new_error The error to store in the @c error variable defined.
  * @pre Requires an Error variable named @c error where to store the returned error and a @c end label.

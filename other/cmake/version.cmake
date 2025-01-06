@@ -10,7 +10,7 @@ set(PROJECT_DESCRIPTION "Common API C++ Examples")
 set(PROJECT_COPYRIGHT "github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE")
 set(PROJECT_VERSION_MAJOR "0")
 set(PROJECT_VERSION_MINOR "0")
-set(PROJECT_VERSION_PATCH "2")
+set(PROJECT_VERSION_PATCH "3")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 string(TIMESTAMP PROJECT_BUILD_TIMESTAMP_UTC "%d-%m-%Y %H:%M:%S (UTC)" UTC)
 
@@ -121,7 +121,6 @@ constexpr const char * const VERSION = \"${PROJECT_VERSION}\";
  * ${PROJECT_VCS_HASH}
  * @endrst
  * @note The hash is enclosed in @e +++ characters if the project was built with uncommited changes.
- * @private
  */
 constexpr const char * const COMMIT_HASH = \"${PROJECT_VCS_HASH}\";
 
@@ -129,7 +128,6 @@ constexpr const char * const COMMIT_HASH = \"${PROJECT_VCS_HASH}\";
  * @rst
  * ${PROJECT_VCS_TAG}
  * @endrst
- * @private
  */
 constexpr const char * const TAG = \"${PROJECT_VCS_TAG}\";
 
@@ -137,7 +135,6 @@ constexpr const char * const TAG = \"${PROJECT_VCS_TAG}\";
  * @rst
  * ${PROJECT_VCS_BRANCH}
  * @endrst
- * @private
  */
 constexpr const char * const BRANCH = \"${PROJECT_VCS_BRANCH}\";
 
@@ -145,7 +142,6 @@ constexpr const char * const BRANCH = \"${PROJECT_VCS_BRANCH}\";
  * @rst
  * ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @endrst
- * @private
  */
 constexpr const char * const BUILD_TIMESTAMP_UTC = \"${PROJECT_BUILD_TIMESTAMP_UTC}\";
 

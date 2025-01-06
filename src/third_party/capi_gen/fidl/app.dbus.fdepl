@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        app.dbus.fdepl
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  * @verbatim
  * Common API C++ DBus Franca Deployment file, for details about this file refer to:

@@ -17,6 +17,7 @@ Checks: >
   -cppcoreguidelines-interfaces-global-init,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-avoid-goto,
+  -cppcoreguidelines-macro-usage,
   misc-*,
   -misc-non-private-member-variables-in-classes,
   portability-*,

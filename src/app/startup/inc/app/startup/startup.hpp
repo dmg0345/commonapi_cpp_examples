@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        startup.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -14,30 +14,37 @@
 #include "utils/error/error.hpp"
 
 /**
- * @brief Startup component.
  * @rst
- * Provides the initialization for the application and the sole include header for third-party and library headers.
+ * The *startup* component provides the initialization and ``main`` function entry point for the application.
  *
- * The compilation of main can be disabled with the @c DISABLE_MAIN definition.
+ * If ``CAPICPP_CLIENT`` is present, then a Common API C++ client is instantiated and executed. If
+ * ``CAPICPP_SERVER`` is present, then a Common API C++ server is instantiated and executed. If neither or
+ * both of these definitions are present, a compilation error occurs.
+ *
+ * The compilation of the ``main`` entry point can be disabled with the ``DISABLE_MAIN`` compile time definition,
+ * this allows for implementation of use cases with external main loops, such as with the test suites.
  * @endrst
  */
 namespace App::Startup
 {
 
 /**
- * @brief The implementation of the main function.
+ * @brief The implementation of the main function as a function in a C++ namespace.
  * @return Error code.
  */
 Utils::Error::Error main(void);
 
 }
 
-#if !defined(DISABLE_MAIN)
+#if !defined(DISABLE_MAIN) || defined(DOXYGEN)
 /**
- * @brief Main function.
+ * @brief Main free function and entry point.
+ * @param[in] argc The number of command line arguments.
+ * @param[in] argv The command line arguments.
  * @return Error code.
+ * @note Use @c DISABLE_MAIN to disable the compilation of this function, and have an external main loop instead.
  */
-int main(void);
+int main(int argc, char ** argv);
 #endif
 
 #endif /* LAPP_CSTARTUP_HPP */

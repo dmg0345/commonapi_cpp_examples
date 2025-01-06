@@ -25,6 +25,8 @@
     },
     // Do not reveal files in the explorer as they are open.
     "explorer.autoReveal": false,
+    // Disable sticky scroll.
+    "editor.stickyScroll.enabled": false,
     // Default theme.
     "workbench.colorTheme": "Visual Studio Dark - C++",
     // Increase line buffer of the integrated terminal.

@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        startup.cpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -20,10 +20,7 @@
 
 using Utils::Error::Error;
 
-namespace App::Startup
-{
-
-Error main(void)
+Error App::Startup::main(void)
 {
 #if defined(CAPICPP_CLIENT)
     return App::Client::main();
@@ -32,11 +29,12 @@ Error main(void)
 #endif
 }
 
-}
-
-#if !defined(DISABLE_MAIN)
-int main(void)
+#if !defined(DISABLE_MAIN) || defined(DOXYGEN)
+int main(int argc, char ** argv)
 {
+    (void)argc;
+    (void)argv;
+
     return static_cast<int>(App::Startup::main());
 }
 #endif

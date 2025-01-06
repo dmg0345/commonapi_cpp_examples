@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        server.cpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -18,14 +18,13 @@
 
 using Utils::Error::Error;
 
-namespace App::Server
-{
+App::Server::AppStubImpl::AppStubImpl() { }
 
-AppStubImpl::AppStubImpl() { }
+App::Server::AppStubImpl::~AppStubImpl() { }
 
-AppStubImpl::~AppStubImpl() { }
-
-void AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client, std::string name, sayHelloReply_t reply)
+void App::Server::AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client,
+                                        std::string name,
+                                        sayHelloReply_t reply)
 {
     (void)client;
 
@@ -35,9 +34,9 @@ void AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client, st
     std::cout << "sayHello('" << name << "'): '" << messageStream.str() << "'\n";
 
     reply(messageStream.str());
-};
+}
 
-Error main(void)
+Error App::Server::main(void)
 {
     CommonAPI::Runtime::setProperty("LogContext", "SRV");
     CommonAPI::Runtime::setProperty("LogApplication", "SRV");
@@ -68,8 +67,6 @@ Error main(void)
     }
 
     return Error::OK;
-}
-
 }
 
 /******************************************************************************************************END OF FILE*****/

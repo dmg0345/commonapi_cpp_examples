@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        client.cpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        03-01-2025 22:07:48 (UTC)
- * @version     0.0.2
+ * @date        06-01-2025 03:13:42 (UTC)
+ * @version     0.0.3
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -18,12 +18,8 @@
 #include <v0/commonapi/app/AppProxy.hpp>
 
 using Utils::Error::Error;
-using namespace v0::commonapi::app;
 
-namespace App::Client
-{
-
-Error main(void)
+Error App::Client::main(void)
 {
     CommonAPI::Runtime::setProperty("LogContext", "CLT");
     CommonAPI::Runtime::setProperty("LogApplication", "CLT");
@@ -35,7 +31,8 @@ Error main(void)
     const std::string & instance = "commonapi.app.App";
     const std::string & connection = "client-sample";
 
-    const std::shared_ptr<AppProxy<>> & myProxy = runtime->buildProxy<AppProxy>(domain, instance, connection);
+    const std::shared_ptr<v0::commonapi::app::AppProxy<>> & myProxy =
+        runtime->buildProxy<v0::commonapi::app::AppProxy>(domain, instance, connection);
 
     std::cout << "Checking availability!" << std::endl;
     while (!myProxy->isAvailable())
@@ -66,8 +63,6 @@ Error main(void)
     }
 
     return Error::OK;
-}
-
 }
 
 /******************************************************************************************************END OF FILE*****/
