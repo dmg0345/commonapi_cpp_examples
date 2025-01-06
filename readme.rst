@@ -42,4 +42,4 @@ To generate a release follow the steps below:
 5. Create pull request from ``release/X.Y.Z_tag`` branch to ``master`` branch, with the title *Release X.Y.Z*.
 6. Create pull request from ``release/X.Y.Z`` branch to ``develop`` branch, with the title *Release X.Y.Z*.
 7. When merged in ``master`` create release and tag from *Github* from merged commit, review production workflow passes.
-8. Delete the ``release/X.Y.Z_tag`` branch, keep the ``release/X.Y.Z`` branch, which holds the commit hash tagged.
+8. Delete the ``release/X.Y.Z_tag`` branch and the ``release/X.Y.Z`` branch.
