@@ -4,7 +4,11 @@ Error
 .. doxygennamespace:: Utils::Error
     :desc-only:
 
-.. doxygenenum:: Utils::Error::Error
+.. doxygenenum:: Utils::Error::ID
+
+.. doxygenclass:: Utils::Error::BaseException
+    :members:
+    :protected-members:
 
 .. doxygendefine:: RET_ON_ERROR
 

@@ -1,7 +1,8 @@
 CommonAPI C++ Examples
 ========================================================================================================================
 
-**Common API C++ Examples** is a collection of examples for the `COVESA / GENIVI CommonAPI C++ framework <https://covesa.github.io/capicxx-core-tools/>`_.
+**Common API C++ Examples** is an example integration of the `COVESA / GENIVI CommonAPI C++ framework <https://covesa.github.io/capicxx-core-tools/>`_,
+along with detailed examples and documentation.
 
 Refer to the documentation `here <https://dmg0345-commonapi-cpp-examples.netlify.app>`_ for details.
 
@@ -35,11 +36,11 @@ Create a release
 
 To generate a release follow the steps below:
 
-1. Create a ``release`` branch from ``develop`` branch named ``release/X.Y.Z``.
-2. Update version in *conf.py* file and in *version.cmake* file, commit change to ``release/X.Y.Z`` branch.
-3. Create branch called ``release/X.Y.Z_tag`` from ``release/X.Y.Z``
-4. On branch ``release/X.Y.Z_tag``, run *cmake* with ``-DCFG_TAG:BOOL=ON`` to tag all files, and commit the changes.
-5. Create pull request from ``release/X.Y.Z_tag`` branch to ``master`` branch, with the title *Release X.Y.Z*.
-6. Create pull request from ``release/X.Y.Z`` branch to ``develop`` branch, with the title *Release X.Y.Z*.
-7. When merged in ``master`` create release and tag from *Github* from merged commit, review production workflow passes.
-8. Delete the ``release/X.Y.Z_tag`` branch and the ``release/X.Y.Z`` branch.
+1. Create a *release* branch from ``develop`` branch named ``release/X.Y.Z``.
+2. Update version in *conf.py* file and in *versioning.cmake* file commit this and other changes to ``release/X.Y.Z``.
+3. Afterwards, on ``release/X.Y.Z``, run *cmake* with ``-DCFG_TAG:BOOL=ON`` to tag all files and commit changes.
+4. Create a pull request from ``release/X.Y.Z`` to ``master``, with title *Release X.Y.Z*, and merge it.
+5. When merged in ``master`` create release and tag from *Github* from merged commit, review production workflow passes.
+6. On ``release/X.Y.Z``, run *cmake* with ``-DCFG_TAG:BOOL=RESTORE`` to untag all files and commit changes.
+7. Create pull request from ``release/X.Y.Z`` to ``develop``, with the title *Release X.Y.Z*, and merge it.
+8. Do not delete the branch ``release/X.Y.Z``.

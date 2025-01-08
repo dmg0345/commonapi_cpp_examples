@@ -1,26 +1,26 @@
 /**
  ***********************************************************************************************************************
- * @file        version.hpp
+ * @file        versioning.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        06-01-2025 03:13:42 (UTC)
- * @version     0.0.3
+ * @date        08-01-2025 17:09:18 (UTC)
+ * @version     1.0.0
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
 
-#ifndef LUTILS_CVERSION_HPP
-#define LUTILS_CVERSION_HPP
+#ifndef LUTILS_CVERSIONING_HPP
+#define LUTILS_CVERSIONING_HPP
 
 #include "priv/info.hpp"
 
 /**
  * @rst
- * Provides versioning values that unequivocally identify the build this documentation was generated for.
+ * The *versioning* component provides values that unequivocally identify the build the documentation was generated for.
  * @endrst
  */
-namespace Utils::Version
+namespace Utils::Versioning
 { }
 
-#endif /* LUTILS_CVERSION_HPP */
+#endif /* LUTILS_CVERSIONING_HPP */
 
 /******************************************************************************************************END OF FILE*****/

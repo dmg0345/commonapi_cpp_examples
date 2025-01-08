@@ -10,20 +10,6 @@
     "workspaceFolder": "/workspace",
     // Set the name of the container in Visual Studio Code user interface, this is not the same as the container name.
     "name": "commonapi_cpp_examples",
-    // Install additional features in the container.
-    "features": {
-        // Graphical User Interface to the container, for details:
-        //  - https://github.com/devcontainers/features/tree/main/src/desktop-lite
-        //  - Real VNC Viewer: https://www.realvnc.com/es/connect/download/viewer/
-        //  - To start: /usr/local/share/desktop-init.sh
-        "ghcr.io/devcontainers/features/desktop-lite:latest": {
-            "password": "vscode",
-            "webPort": 6080,
-            "vncPort": 5901
-        }
-    },
-    // Port forwarding for desktop-lite.
-    "forwardPorts": [6080, 5901],
     // Apply customizations to tools in the container.
     "customizations": {
         "vscode": {

@@ -2,14 +2,22 @@
  ***********************************************************************************************************************
  * @file        capi.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        06-01-2025 03:13:42 (UTC)
- * @version     0.0.3
+ * @date        08-01-2025 17:09:18 (UTC)
+ * @version     1.0.0
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
 
 #ifndef LUTILS_CCAPI_HPP
 #define LUTILS_CCAPI_HPP
+
+#include "priv/runtime.hpp"
+#if defined(CAPICPP_CLIENT)
+#include "priv/client.hpp"
+#endif
+#if defined(CAPICPP_SERVER)
+#include "priv/server.hpp"
+#endif
 
 /**
  * @rst
@@ -147,7 +155,16 @@
  * @endrst
  */
 namespace Utils::Capi
+{
+
+/**
+ * @brief Internal implementation details.
+ * @private
+ */
+namespace Priv
 { }
+
+}
 
 #endif /* LUTILS_CCAPI_HPP */
 

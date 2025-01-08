@@ -8,9 +8,9 @@ set(PROJECT_CONTACT "dmg0345@gmail.com")
 set(PROJECT_URL "https://github.com/dmg0345/commonapi_cpp_examples")
 set(PROJECT_DESCRIPTION "Common API C++ Examples")
 set(PROJECT_COPYRIGHT "github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE")
-set(PROJECT_VERSION_MAJOR "0")
+set(PROJECT_VERSION_MAJOR "1")
 set(PROJECT_VERSION_MINOR "0")
-set(PROJECT_VERSION_PATCH "3")
+set(PROJECT_VERSION_PATCH "0")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 string(TIMESTAMP PROJECT_BUILD_TIMESTAMP_UTC "%d-%m-%Y %H:%M:%S (UTC)" UTC)
 
@@ -68,10 +68,10 @@ set(VERSION_INFO "/**
 // clang-format off
 // THIS FILE IS AUTO-GENERATED, IF MODIFIED, CHANGES WILL BE OVERWRITTEN.
 
-#ifndef LUTILS_CVERSION_INFO_HPP
-#define LUTILS_CVERSION_INFO_HPP
+#ifndef LUTILS_CVERSIONING_INFO_HPP
+#define LUTILS_CVERSIONING_INFO_HPP
 
-namespace Utils::Version
+namespace Utils::Versioning
 {
 
 /**
@@ -152,7 +152,7 @@ constexpr const char * const BUILD_TIMESTAMP_UTC = \"${PROJECT_BUILD_TIMESTAMP_U
 /******************************************************************************************************END OF FILE*****/")
 
 # Store version contents to file.
-set(PROJECT_VERSION_FILE_LOCATION "${PROJECT_ROOT_DIR}/src/utils/version/inc/utils/version/priv/info.hpp")
+set(PROJECT_VERSION_FILE_LOCATION "${PROJECT_ROOT_DIR}/src/utils/versioning/inc/utils/versioning/priv/info.hpp")
 message(STATUS "Storing project version file list at '${PROJECT_VERSION_FILE_LOCATION}'...")
 file(WRITE "${PROJECT_VERSION_FILE_LOCATION}" "${VERSION_INFO}")
 configure_file("${PROJECT_VERSION_FILE_LOCATION}" "${PROJECT_VERSION_FILE_LOCATION}")

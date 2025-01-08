@@ -67,7 +67,6 @@ RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                   
                                                                                                                        \
     ## Other ###########################################################################################################
     git=1:2.39.5-0+deb12u1                                                                                             \
-    dconf-cli                                                                                                          \
     wget                                                                                                               \
     xz-utils                                                                                                           \
     locales;                                                                                                           \
@@ -125,21 +124,6 @@ RUN Push-Location "/usr/venvs";                                                 
 
 # Export the path where the Python virtual environment is located as an environment variable.
 ENV VIRTUAL_ENV_PATH="/usr/venvs/development"
-
-## Desktop Lite ########################################################################################################
-# Copy artifacts and fluxbox configuration from build context to container.
-COPY ".devcontainer/.other/" "/other/"
-
-# Deploy all artifacts and fluxbox configuration.
-RUN New-Item -ItemType Directory -Path "/root/.fluxbox/styles" -Force;                                                 \
-    tar -zxvf "/other/fluxbox/retour.tgz" --directory "/root/.fluxbox/styles";                                         \
-    New-Item -ItemType File -Path "/root/.fluxbox/init" -Force;                                                        \
-    Copy-Item "/other/fluxbox/init" "/root/.fluxbox/init" -Force;                                                      \
-    New-Item -ItemType File -Path "/root/.fluxbox/menu" -Force;                                                        \
-    Copy-Item "/other/fluxbox/menu" "/root/.fluxbox/menu" -Force;                                                      \
-    New-Item -ItemType File -Path "/root/.fluxbox/startup" -Force;                                                     \
-    Copy-Item "/other/fluxbox/startup" "/root/.fluxbox/startup" -Force;                                                \
-    Remove-Item "/other" -Force -Recurse;
 
 ## CommonAPI C++ Tools #################################################################################################
 # Build and install CommonAPI C++ Core, D-Bus and SOME/IP tools, for reference, refer to the following links:

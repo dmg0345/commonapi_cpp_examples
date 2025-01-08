@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        error.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        06-01-2025 03:13:42 (UTC)
- * @version     0.0.3
+ * @date        08-01-2025 17:09:18 (UTC)
+ * @version     1.0.0
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -12,16 +12,21 @@
 #define LUTILS_CERROR_HPP
 
 #include <cstdint>
+#include <stdexcept>
 
 /**
  * @rst
- * Provides error definitions and error management functionality.
+ * The *error* component provides definitions, functions and macros for optional error management application wide.
  * @endrst
  */
 namespace Utils::Error
 {
 
-namespace
+/**
+ * @brief Internal implementation details.
+ * @private
+ */
+namespace Priv
 {
 
 /**
@@ -42,7 +47,7 @@ enum class CID : uint32_t
     None = 0U, /**< No component identifier. */
     Error, /**< Error component identifier. */
     Version, /**< Version component identifier. */
-    CommonAPI, /**< Common API, also known as 'capi', component identifier. */
+    CommonAPI, /**< Common API C++, also known as @c capi, component identifier. */
     Startup, /**< Startup component identifier. */
     Client, /**< Client component identifier. */
     Server /**< Server component identifier. */
@@ -66,25 +71,59 @@ constexpr uint32_t def(const uint32_t eid, const CID cid, const LID lid)
 
 }
 
-enum class Error : uint32_t
+/** Identifiers for the different error codes. */
+enum class ID : uint32_t
 {
-    OK = def(0U, CID::None, LID::None), /**< Generic no error, success. */
-    UNKNOWN = def(1U, CID::None, LID::None), /**< Generic unknown error. */
-    INVALID_ARGS = def(2U, CID::None, LID::None) /**< Generic invalid arguments error. */
+    /** Generic no error, success. */
+    OK = def(0U, Priv::CID::None, Priv::LID::None),
+    /** Generic unknown error. */
+    UNKNOWN = def(1U, Priv::CID::None, Priv::LID::None),
+    /** Generic invalid arguments error. */
+    INVALID_ARGS = def(2U, Priv::CID::None, Priv::LID::None),
+    /** Generic null pointer error. */
+    NULL_POINTER = def(3U, Priv::CID::None, Priv::LID::None),
+
+    /** Underlying error in the Common API C++ Runtime abstraction. */
+    CAPI_RUNTIME = def(0U, Priv::CID::CommonAPI, Priv::LID::Utils),
+    /** Underlying error in the Common API C++ Client / Proxy abstraction. */
+    CAPI_CLIENT = def(1U, Priv::CID::CommonAPI, Priv::LID::Utils),
+    /** Underlying error in the Common API C++ Server / Stub abstraction. */
+    CAPI_SERVER = def(2U, Priv::CID::CommonAPI, Priv::LID::Utils)
+};
+
+/** Base exception for errors. */
+class BaseException : public std::exception
+{
+public:
+    /**
+     * @brief Class constructor.
+     * @param what The message to be raised as part of the exception.
+     */
+    explicit BaseException(const std::string & what) : message(what) { }
+
+    /**
+     * @brief Message to raise for the exception.
+     * @return Message for the exception as a C NULL terminated string.
+     */
+    const char * what(void) const noexcept override { return message.c_str(); }
+
+private:
+    std::string message; /**< Message related to the exception. */
 };
 
 // clang-format off
 
 /**
- * @brief Triggers a @c return of when the given expression results in an error not Utils::Error::Error::OK.
+ * @brief Triggers a @c return of when the given expression results in an error not Utils::Error::ID::OK.
  * @param[in] expr The expression.
  * @return The error returned by @p expr.
+ * @pre Requires an Error variable named @c error where to store the returned error.
  */
 #define RET_ON_ERROR(expr)                                                                                             \
     do                                                                                                                 \
     {                                                                                                                  \
-        Utils::Error::Error error = (expr);                                                                            \
-        if (error != Utils::Error::Error::OK)                                                                          \
+        error = (expr);                                                                                                \
+        if (error != Utils::Error::ID::OK)                                                                             \
         {                                                                                                              \
             return error;                                                                                              \
         }                                                                                                              \
@@ -93,7 +132,7 @@ enum class Error : uint32_t
 
 /**
  * @brief Triggers a @c return with the error specified when the given expression results in an error not
- * Utils::Error::Error::OK.
+ * Utils::Error::ID::OK.
  * @param[in] expr The expression.
  * @param[in] new_error The error to return.
  * @return The error specified in @p new_error.
@@ -101,7 +140,7 @@ enum class Error : uint32_t
 #define RET_WITH_ERROR(expr, new_error)                                                                                \
     do                                                                                                                 \
     {                                                                                                                  \
-        if ((expr) != Utils::Error::Error::OK)                                                                         \
+        if ((expr) != Utils::Error::ID::OK)                                                                            \
         {                                                                                                              \
             return new_error;                                                                                          \
         }                                                                                                              \
@@ -125,7 +164,7 @@ enum class Error : uint32_t
     while (false)
 
 /**
- * @brief Triggers a @c goto to @c end label when the given expression results in an error not Utils::Error::Error::OK.
+ * @brief Triggers a @c goto to @c end label when the given expression results in an error not Utils::Error::ID::OK.
  * @param[in] expr The expression.
  * @pre Requires an Error variable named @c error where to store the returned error and a @c end label.
  */
@@ -133,7 +172,7 @@ enum class Error : uint32_t
     do                                                                                                                 \
     {                                                                                                                  \
         error = (expr);                                                                                                \
-        if (error != Utils::Error::Error::OK)                                                                          \
+        if (error != Utils::Error::ID::OK)                                                                             \
         {                                                                                                              \
             goto end;                                                                                                  \
         }                                                                                                              \
@@ -142,7 +181,7 @@ enum class Error : uint32_t
 
 /**
  * @brief Triggers a @c goto to @c end label with the error specified when the given expression results in an error
- * not Utils::Error::Error::OK.
+ * not Utils::Error::ID::OK.
  * @param[in] expr The expression.
  * @param[in] new_error The error to store in the @c error variable defined.
  * @pre Requires an Error variable named @c error where to store the returned error and a @c end label.
@@ -150,7 +189,7 @@ enum class Error : uint32_t
 #define END_WITH_ERROR(expr, new_error)                                                                                \
     do                                                                                                                 \
     {                                                                                                                  \
-        if ((expr) != Utils::Error::Error::OK)                                                                         \
+        if ((expr) != Utils::Error::ID::OK)                                                                            \
         {                                                                                                              \
             error = (new_error);                                                                                       \
             goto end;                                                                                                  \

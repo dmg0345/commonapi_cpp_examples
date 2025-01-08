@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        server.hpp
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        06-01-2025 03:13:42 (UTC)
- * @version     0.0.3
+ * @date        08-01-2025 17:09:18 (UTC)
+ * @version     1.0.0
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  ***********************************************************************************************************************
  */
@@ -11,9 +11,8 @@
 #ifndef LAPP_CSERVER_HPP
 #define LAPP_CSERVER_HPP
 
+#include "utils/capi/capi.hpp"
 #include "utils/error/error.hpp"
-#include <CommonAPI/CommonAPI.hpp>
-#include <v0/commonapi/app/AppStubDefault.hpp>
 
 /**
  * @rst
@@ -28,25 +27,43 @@
 namespace App::Server
 {
 
-class AppStubImpl : public v0_1::commonapi::app::AppStubDefault
+/** Implementation of the application service. */
+class AppService : public Utils::Capi::AppServiceBase
 {
+    /** Delete copy constructor, move constructor, copy operator and move operator. @{ */
+    AppService(void) = delete;
+    AppService(const AppService &) = delete;
+    AppService(AppService &&) = delete;
+    AppService & operator=(const AppService &) = delete;
+    AppService & operator=(AppService &&) = delete;
+    /** @} */
+
 public:
-    AppStubImpl();
-    ~AppStubImpl() override;
+    /**
+     * @brief Class constructor.
+     * @param[in] domain Common API C++ domain for the application service.
+     * @param[in] instance Common API C++ instance for the application service.
+     * @param[in] connection Common API C++ connection for the application service.
+     */
+    AppService(const std::string & domain, const std::string & instance, const std::string & connection);
 
-    AppStubImpl(AppStubImpl &) = delete;
-    AppStubImpl & operator=(AppStubImpl &) = delete;
-    AppStubImpl(AppStubImpl &&) = delete;
-    AppStubImpl & operator=(AppStubImpl &&) = delete;
+    /** Class Destructor. */
+    ~AppService(void) override;
 
-    void sayHello(const std::shared_ptr<CommonAPI::ClientId> client, std::string name, sayHelloReply_t reply) override;
+    /**
+     * @brief Implementation of 'ping' in the server.
+     * @param client An identifier for the client performing the request.
+     * @param request The message for the request.
+     * @param reply The function to use to reply back to the client.
+     */
+    void ping(const std::shared_ptr<CommonAPI::ClientId> client, std::string request, pingReply_t reply) override;
 };
 
 /**
  * @brief Main function for a server executable.
- * @return Error code.
+ * @return Identifier for the error.
  */
-Utils::Error::Error main(void);
+Utils::Error::ID main(void);
 
 }
 

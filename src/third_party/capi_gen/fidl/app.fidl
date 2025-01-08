@@ -2,8 +2,8 @@
  ***********************************************************************************************************************
  * @file        app.fidl
  * @author      Diego Martínez García (dmg0345@gmail.com)
- * @date        06-01-2025 03:13:42 (UTC)
- * @version     0.0.3
+ * @date        08-01-2025 17:09:18 (UTC)
+ * @version     1.0.0
  * @copyright   github.com/dmg0345/commonapi_cpp_examples/blob/master/LICENSE
  * @verbatim
  * Common API C++ DBus Franca Deployment file, for details about this file refer to:
@@ -19,12 +19,12 @@ package commonapi.app
 interface App {
     version { major 0 minor 1 }
 
-    method sayHello {
+    method ping {
         in {
-            String name
+            String request
         }
         out {
-            String message
+            String response
         }
     }
 

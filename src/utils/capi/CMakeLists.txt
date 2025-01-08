@@ -13,12 +13,24 @@ target_compile_definitions(capicpp_server PRIVATE "CAPICPP_SERVER")
 set_target_properties(capicpp_server PROPERTIES INSTALL_RPATH "$ORIGIN;$ORIGIN/core")
 
 ## Sources #############################################################################################################
-# Collect source files of component and add them to relevant targets.
+# Collect source files of component relevant to a client and add them to relevant targets.
+set(SOURCES_LUTILS_CCAPI_CLIENT
+    "${CMAKE_CURRENT_SOURCE_DIR}/runtime.cpp"
+)
+target_sources(capicpp_client PRIVATE ${SOURCES_LUTILS_CCAPI_CLIENT})
+
+# Collect source files of component relevant to a server and add them to relevant targets.
+set(SOURCES_LUTILS_CCAPI_SERVER
+    "${CMAKE_CURRENT_SOURCE_DIR}/runtime.cpp"
+)
+target_sources(capicpp_server PRIVATE ${SOURCES_LUTILS_CCAPI_SERVER})
+
+# Collect source files of component.
 set(SOURCES_LUTILS_CCAPI
-    ""
+    ${SOURCES_LUTILS_CCAPI_CLIENT}
+    ${SOURCES_LUTILS_CCAPI_SERVER}
     CACHE INTERNAL ""
 )
-foreach_target(TARGETS capicpp_client capicpp_server FN target_sources PRIVATE ${SOURCES_LUTILS_CCAPI})
 
 ## Includes ############################################################################################################
 # Collect include directories of component and add them to relevant targets.
