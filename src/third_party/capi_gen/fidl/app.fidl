@@ -19,12 +19,12 @@ package commonapi.app
 interface App {
     version { major 0 minor 1 }
 
-    method sayHello {
+    method ping {
         in {
-            String name
+            String request
         }
         out {
-            String message
+            String response
         }
     }
 

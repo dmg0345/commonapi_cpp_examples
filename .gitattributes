@@ -8,7 +8,4 @@
 *.cpp text
 *.rst text
 
-# These files need a UNIX line ending for Fluxbox to load and work properly.
-.devcontainer/.other/fluxbox/* text eol=lf
-
 # Symbolic links, this must be last.

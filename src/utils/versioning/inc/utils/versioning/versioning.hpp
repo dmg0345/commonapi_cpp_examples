@@ -1,6 +1,6 @@
 /**
  ***********************************************************************************************************************
- * @file        version.hpp
+ * @file        versioning.hpp
  * @author      ${PROJECT_AUTHOR} (${PROJECT_CONTACT})
  * @date        ${PROJECT_BUILD_TIMESTAMP_UTC}
  * @version     ${PROJECT_VERSION}
@@ -8,19 +8,19 @@
  ***********************************************************************************************************************
  */
 
-#ifndef LUTILS_CVERSION_HPP
-#define LUTILS_CVERSION_HPP
+#ifndef LUTILS_CVERSIONING_HPP
+#define LUTILS_CVERSIONING_HPP
 
 #include "priv/info.hpp"
 
 /**
  * @rst
- * Provides versioning values that unequivocally identify the build this documentation was generated for.
+ * The *versioning* component provides values that unequivocally identify the build the documentation was generated for.
  * @endrst
  */
-namespace Utils::Version
+namespace Utils::Versioning
 { }
 
-#endif /* LUTILS_CVERSION_HPP */
+#endif /* LUTILS_CVERSIONING_HPP */
 
 /******************************************************************************************************END OF FILE*****/

@@ -47,7 +47,7 @@ related *Docker* images for development containers are located at `DockerHub <ht
 .. note::
 
     This is the documentation for |ProjectFriendlyName|, version |ProjectVersion|, refer to
-    :doc:`utils/version` for more details regarding the release.
+    :doc:`utils/versioning` for more details regarding the release.
 
 .. important::
 

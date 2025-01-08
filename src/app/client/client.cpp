@@ -8,61 +8,74 @@
  ***********************************************************************************************************************
  */
 
-#include <iostream>
-#include <thread>
-
 #include "app/client/client.hpp"
+
+#include <thread>
+#include <chrono>
+
+#include "utils/capi/capi.hpp"
 #include "utils/error/error.hpp"
 
-#include <CommonAPI/CommonAPI.hpp>
-#include <v0/commonapi/app/AppProxy.hpp>
+namespace Client = App::Client;
+namespace Capi = Utils::Capi;
+namespace Error = Utils::Error;
 
-using Utils::Error::Error;
+Client::AppClient::AppClient(const std::string & domain, const std::string & instance, const std::string & connection) :
+    Capi::AppClientBase(domain, instance, connection)
+{ }
 
-Error App::Client::main(void)
+Client::AppClient::~AppClient(void) { }
+
+Utils::Error::ID Client::AppClient::ping(const std::string & request, std::string & response)
 {
-    CommonAPI::Runtime::setProperty("LogContext", "CLT");
-    CommonAPI::Runtime::setProperty("LogApplication", "CLT");
-    CommonAPI::Runtime::setProperty("LibraryBase", "App");
+    auto error = Error::ID::UNKNOWN;
+    std::string response_msg;
+    CommonAPI::CallStatus call_status = CommonAPI::CallStatus::SUCCESS;
+    const CommonAPI::CallInfo call_info(1000, 1234); // TODO: Double check this values.
 
-    const std::shared_ptr<CommonAPI::Runtime> & runtime = CommonAPI::Runtime::get();
+    // Perform synchronous call.
+    this->proxy->ping(request, call_status, response_msg, &call_info);
+    END_ON_TRUE_WITH_ERROR(call_status != CommonAPI::CallStatus::SUCCESS, Error::ID::CAPI_CLIENT);
 
-    const std::string & domain = "local";
-    const std::string & instance = "commonapi.app.App";
-    const std::string & connection = "client-sample";
+    // All good.
+    response = std::move(response_msg);
+    error = Error::ID::OK;
 
-    const std::shared_ptr<v0::commonapi::app::AppProxy<>> & myProxy =
-        runtime->buildProxy<v0::commonapi::app::AppProxy>(domain, instance, connection);
+end:
 
-    std::cout << "Checking availability!" << std::endl;
-    while (!myProxy->isAvailable())
-    {
-        std::this_thread::sleep_for(std::chrono::microseconds(10));
-    }
-    std::cout << "Available..." << std::endl;
+    return error;
+}
 
-    const std::string name = "World";
-    CommonAPI::CallStatus callStatus = CommonAPI::CallStatus::SUCCESS;
-    std::string returnMessage;
+Error::ID Client::main(void)
+{
+    auto error = Error::ID::UNKNOWN;
+    std::string response;
 
-    CommonAPI::CallInfo info(1000);
-    info.sender_ = 1234;
+    // Create application client.
+    auto app_client = Client::AppClient::make<Client::AppClient>("local", "commonapi.app.App", "client-sample");
 
+    // Create client manager with all clients.
+    auto client = Capi::Client<Client::AppClient>(app_client);
+
+    // Start all clients.
+    END_ON_ERROR(client.start());
+
+    // Send messages every second until stopped.
     while (true)
     {
-        myProxy->sayHello(name, callStatus, returnMessage, &info);
-        if (callStatus != CommonAPI::CallStatus::SUCCESS)
-        {
-            std::cerr << "Remote call failed!" << std::endl;
-            return Error::UNKNOWN;
-        }
-        info.timeout_ = info.timeout_ + 1000;
-
-        std::cout << "Got message: '" << returnMessage << std::endl;
+        END_ON_ERROR(client.app->ping("Hello Server, I am the Client!", response));
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    return Error::OK;
+    // Stop all clients.
+    END_ON_ERROR(client.stop());
+
+    // All good.
+    error = Error::ID::OK;
+
+end:
+
+    return error;
 }
 
 /******************************************************************************************************END OF FILE*****/

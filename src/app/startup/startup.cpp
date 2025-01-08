@@ -15,12 +15,12 @@
 #elif (!defined(CAPICPP_CLIENT) && defined(CAPICPP_SERVER))
 #include "app/server/server.hpp"
 #else
-#error "Neither 'CAPICPP_CLIENT' or 'CAPICPP_SERVER' are defined, or both are defined."
+#error "Both 'CAPICPP_CLIENT' and 'CAPICPP_SERVER' defined or neither defined, one must be defined."
 #endif
 
-using Utils::Error::Error;
+namespace Error = Utils::Error;
 
-Error App::Startup::main(void)
+Error::ID App::Startup::main(void)
 {
 #if defined(CAPICPP_CLIENT)
     return App::Client::main();

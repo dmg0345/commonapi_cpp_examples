@@ -27,7 +27,8 @@ Checks: >
   -readability-avoid-const-params-in-decls,
   -readability-magic-numbers,
   -readability-redundant-declaration,
-  -readability-function-cognitive-complexity
+  -readability-function-cognitive-complexity,
+  -readability-convert-member-functions-to-static
 WarningsAsErrors: >
   bugprone-*,
   clang-analyzer-*,

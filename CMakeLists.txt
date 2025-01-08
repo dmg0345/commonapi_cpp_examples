@@ -27,10 +27,10 @@ include(FetchContent)
 
 # Enable languages and configure them explicitly.
 enable_language(C CXX ASM)
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
@@ -70,7 +70,7 @@ set_property(CACHE CFG_TESTS_ENABLE_SANITIZERS PROPERTY STRINGS "OFF" "ON")
 #    Boolean variable that can be ON or OFF, see: https://cmake.org/cmake/help/latest/module/CTest.html.
 
 # After all variables have been defined generate versioning files and variables.
-include("other/cmake/version.cmake")
+include("other/cmake/versioning.cmake")
 
 # Print a summary of relevant variables.
 message(STATUS "########## Relevant CMake Configuration Values ##########")

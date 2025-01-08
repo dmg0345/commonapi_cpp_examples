@@ -1,8 +1,8 @@
 ## Add 'error' component ###############################################################################################
 add_subdirectory("error")
 
-## Add 'version' component #############################################################################################
-add_subdirectory("version")
+## Add 'versioning' component ##########################################################################################
+add_subdirectory("versioning")
 
 ## Add 'capi' component ################################################################################################
 add_subdirectory("capi")
@@ -28,7 +28,7 @@ foreach_target(TARGETS capicpp_client capicpp_server FN target_include_directori
 set(SOURCES_LUTILS
     ${SOURCES_LUTILS_CUTILS}
     ${SOURCES_LUTILS_CERROR}
-    ${SOURCES_LUTILS_CVERSION}
+    ${SOURCES_LUTILS_CVERSIONING}
     ${SOURCES_LUTILS_CCAPI}
     CACHE INTERNAL ""
 )
@@ -37,7 +37,7 @@ set(SOURCES_LUTILS
 set(INCLUDE_DIRS_LUTILS
     ${INCLUDE_DIRS_LUTILS_CUTILS}
     ${INCLUDE_DIRS_LUTILS_CERROR}
-    ${INCLUDE_DIRS_LUTILS_CVERSION}
+    ${INCLUDE_DIRS_LUTILS_CVERSIONING}
     ${INCLUDE_DIRS_LUTILS_CCAPI}
     CACHE INTERNAL ""
 )
