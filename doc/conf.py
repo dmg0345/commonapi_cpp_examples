@@ -5,6 +5,8 @@ its XML output to be at the specified location. Relevant links for documentation
   - Sphinx:
     - https://www.sphinx-doc.org/en/master/usage/configuration.html
     - Conditional Documentation: https://stackoverflow.com/a/45637280/21951997
+  - Breathe:
+    - Summary of all directives: https://breathe.readthedocs.io/en/latest/directives.html
   - Doxygen:
     - Grouping: https://www.doxygen.nl/manual/grouping.html
     - Autolink to enumerations, functions and so on: https://www.doxygen.nl/manual/autolink.html
@@ -212,7 +214,18 @@ def on_missing_reference(app: sphinx.application.Sphinx,
         "cpp": {
             "*": {
                 "size_t": None, "uint32_t": None,
-                "v0_1": None, "v0_1::commonapi": None, "v0_1::commonapi::app": None, "v0_1::commonapi::app::AppStubDefault": None
+                "CommonAPI": None, "CommonAPI::Runtime": None, "CommonAPI::ClientId": None,
+                "v0_1": None, "v0_1::commonapi": None, "v0_1::commonapi::app": None, "v0_1::commonapi::app::AppStubDefault": None,
+                "v0_1::commonapi::app::AppProxy": None,
+            },
+            "app/client": {
+                "Utils::Capi::Priv": None, "Proxy": None, "AttributeExtensions": None
+            },
+            "app/server": {
+                "Utils::Capi::Priv": None, "Stub": None, "pingReply_t": None,
+            },
+            "utils/capi": {
+                "Priv": None
             }
         }
     }

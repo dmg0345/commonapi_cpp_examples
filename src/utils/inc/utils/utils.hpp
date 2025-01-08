@@ -14,13 +14,11 @@
 /**
  * @rst
  * The utils layer contains different types of components of generic nature and not necessarily linked between each
- * other and which are intended to be used accross the codebase.
- *
- * These components are enumerated below. Click on a specific component to obtain more details.
+ * other and which are intended to be used accross the codebase. These components are enumerated below.
  *
  * - :doc:`capi`
  * - :doc:`error`
- * - :doc:`version`
+ * - :doc:`versioning`
  * @endrst
  */
 namespace Utils

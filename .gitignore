@@ -21,4 +21,4 @@
 dist
 
 # Ignore version file.
-/src/utils/version/inc/utils/version/priv/info.hpp
+/src/utils/versioning/inc/utils/versioning/priv/info.hpp

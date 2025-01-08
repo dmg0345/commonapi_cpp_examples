@@ -8,65 +8,60 @@
  ***********************************************************************************************************************
  */
 
-#include <iostream>
-#include <thread>
-
 #include "app/server/server.hpp"
+
+#include <thread>
+#include <chrono>
+
+#include "utils/capi/capi.hpp"
 #include "utils/error/error.hpp"
 
-#include <CommonAPI/CommonAPI.hpp>
+namespace Server = App::Server;
+namespace Capi = Utils::Capi;
+namespace Error = Utils::Error;
 
-using Utils::Error::Error;
+Server::AppService::AppService(const std::string & domain,
+                               const std::string & instance,
+                               const std::string & connection) :
+    Capi::AppServiceBase(domain, instance, connection)
+{ }
 
-App::Server::AppStubImpl::AppStubImpl() { }
+Server::AppService::~AppService(void) { }
 
-App::Server::AppStubImpl::~AppStubImpl() { }
-
-void App::Server::AppStubImpl::sayHello(const std::shared_ptr<CommonAPI::ClientId> client,
-                                        std::string name,
-                                        sayHelloReply_t reply)
+void Server::AppService::ping(const std::shared_ptr<CommonAPI::ClientId> client, std::string request, pingReply_t reply)
 {
     (void)client;
-
-    std::stringstream messageStream;
-
-    messageStream << "Hello " << name << "!";
-    std::cout << "sayHello('" << name << "'): '" << messageStream.str() << "'\n";
-
-    reply(messageStream.str());
+    reply(request);
 }
 
-Error App::Server::main(void)
+Error::ID Server::main(void)
 {
-    CommonAPI::Runtime::setProperty("LogContext", "SRV");
-    CommonAPI::Runtime::setProperty("LogApplication", "SRV");
-    CommonAPI::Runtime::setProperty("LibraryBase", "App");
+    auto error = Error::ID::UNKNOWN;
 
-    const std::shared_ptr<CommonAPI::Runtime> & runtime = CommonAPI::Runtime::get();
+    // Create application service.
+    auto app_service = Server::AppService::make<Server::AppService>("local", "commonapi.app.App", "server-sample");
 
-    const std::string & domain = "local";
-    const std::string & instance = "commonapi.app.App";
-    const std::string & connection = "server-sample";
+    // Create client with all clients.
+    auto server = Capi::Server<AppService>(app_service);
 
-    const std::shared_ptr<AppStubImpl> & myService = std::make_shared<AppStubImpl>();
-    bool successfullyRegistered = runtime->registerService(domain, instance, myService, connection);
+    // Start all clients.
+    END_ON_ERROR(server.start());
 
-    while (!successfullyRegistered)
-    {
-        std::cout << "Register Service failed, trying again in 100 milliseconds..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        successfullyRegistered = runtime->registerService(domain, instance, myService, connection);
-    }
-
-    std::cout << "Successfully Registered Service!" << std::endl;
-
+    // Send messages every second until stopped.
     while (true)
     {
-        std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(60));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    return Error::OK;
+    // Stop all clients.
+    END_ON_ERROR(server.stop());
+
+    // All good.
+    error = Error::ID::OK;
+
+end:
+
+    return error;
 }
 
 /******************************************************************************************************END OF FILE*****/

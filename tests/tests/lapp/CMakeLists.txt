@@ -31,6 +31,11 @@ set_tests_properties(test_lapp_someip PROPERTIES
     WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
+# Provide compile definition so that both client and server artifacts exist in the same executable.
+foreach_target(TARGETS test_lapp_dbus test_lapp_someip FN target_compile_definitions
+    PRIVATE "CAPICPP_CLIENT" "CAPICPP_SERVER"
+)
+
 # Add different compile definitions for each target.
 target_compile_definitions(test_lapp_dbus PRIVATE "TEST_LAPP_MODE_DBUS")
 target_compile_definitions(test_lapp_someip PRIVATE "TEST_LAPP_MODE_SOMEIP")

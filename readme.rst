@@ -1,7 +1,8 @@
 CommonAPI C++ Examples
 ========================================================================================================================
 
-**Common API C++ Examples** is a collection of examples for the `COVESA / GENIVI CommonAPI C++ framework <https://covesa.github.io/capicxx-core-tools/>`_.
+**Common API C++ Examples** is an example integration of the `COVESA / GENIVI CommonAPI C++ framework <https://covesa.github.io/capicxx-core-tools/>`_,
+along with detailed examples and documentation.
 
 Refer to the documentation `here <https://dmg0345-commonapi-cpp-examples.netlify.app>`_ for details.
 
@@ -36,7 +37,7 @@ Create a release
 To generate a release follow the steps below:
 
 1. Create a ``release`` branch from ``develop`` branch named ``release/X.Y.Z``.
-2. Update version in *conf.py* file and in *version.cmake* file, commit change to ``release/X.Y.Z`` branch.
+2. Update version in *conf.py* file and in *versioning.cmake* file, commit change to ``release/X.Y.Z`` branch.
 3. Create branch called ``release/X.Y.Z_tag`` from ``release/X.Y.Z``
 4. On branch ``release/X.Y.Z_tag``, run *cmake* with ``-DCFG_TAG:BOOL=ON`` to tag all files, and commit the changes.
 5. Create pull request from ``release/X.Y.Z_tag`` branch to ``master`` branch, with the title *Release X.Y.Z*.

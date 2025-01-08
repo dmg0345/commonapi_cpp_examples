@@ -8,25 +8,23 @@
  ***********************************************************************************************************************
  */
 
+#include "test_lapp.hpp"
+
 #include <thread>
 #include <string>
 #include <chrono>
 
 #include "test_utils/test_utils.hpp"
-#include "test_lapp.hpp"
 
 #include "app/client/client.hpp"
 #include "app/server/server.hpp"
+#include "utils/capi/capi.hpp"
 #include "utils/error/error.hpp"
 
-#include <CommonAPI/CommonAPI.hpp>
-#include <v0/commonapi/app/AppProxy.hpp>
-#include <v0/commonapi/app/AppStubDefault.hpp>
-
-using namespace App::Client;
-using namespace App::Server;
-using namespace v0::commonapi::app;
-using Utils::Error::Error;
+namespace Client = App::Client;
+namespace Server = App::Server;
+namespace Capi = Utils::Capi;
+namespace Error = Utils::Error;
 
 #if defined(TEST_LAPP_MODE_DBUS)
 #define AppTestFixture AppDBusTestFixture
@@ -34,16 +32,23 @@ using Utils::Error::Error;
 #define AppTestFixture AppSomeIPTestFixture
 #endif
 
-// NOLINTBEGIN(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor,
-// cppcoreguidelines-special-member-functions)
+// NOLINTBEGIN(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor)
 
 /** Test suite, instantiated for every test. */
 
 class AppTestFixture : public testing::Test
 {
+public:
+    /** Delete copy constructor, move constructor, copy operator and move operator. @{ */
+    AppTestFixture(const AppTestFixture &) = delete;
+    AppTestFixture(AppTestFixture &&) = delete;
+    AppTestFixture & operator=(const AppTestFixture &) = delete;
+    AppTestFixture & operator=(AppTestFixture &&) = delete;
+    /** @} */
+
 protected:
     /** Text fixture constructor, called before setup function in every test. */
-    AppTestFixture() { }
+    AppTestFixture() : client(nullptr), server(nullptr) { }
 
     /** Test fixture destructor, called after teardown function in every test. */
     ~AppTestFixture() override { }
@@ -51,75 +56,42 @@ protected:
     /** Setup function, called after the constructor in every test. */
     void SetUp() override
     {
-        // Get Common API runtime.
-        runtime = CommonAPI::Runtime::get();
+        // Create clients and services.
+        auto app_service = Server::AppService::make<Server::AppService>("local", "commonapi.app.App", "server-sample");
+        auto app_client = Client::AppClient::make<Client::AppClient>("local", "commonapi.app.App", "client-sample");
 
-        // Create server and register it.
-        server = std::make_shared<AppStubImpl>();
-        while (!runtime->registerService(server_domain, server_instance, server, server_connection))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        // Create client and server.
+        this->server = std::make_shared<Capi::Server<Server::AppService>>(app_service);
+        this->client = std::make_shared<Capi::Client<Client::AppClient>>(app_client);
 
-        // Create client and make it available.
-        client = runtime->buildProxy<AppProxy>(client_domain, client_instance, client_connection);
-        while (!client->isAvailable())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        // Start server, and afterwards the client.
+        ASSERT_EQ(this->server->start(), Error::ID::OK);
+        ASSERT_EQ(this->client->start(), Error::ID::OK);
     }
 
     /** Teardown function, called before the destructor in every test. */
     void TearDown() override
     {
-        // Unregister server.
-        const auto & serverAddress = server->getStubAdapter()->getAddress();
-        while (!runtime->unregisterService(serverAddress.getDomain(),
-                                           serverAddress.getInterface(),
-                                           serverAddress.getInstance()))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
+        // Terminate client and afterwards the server.
+        ASSERT_EQ(this->client->stop(), Error::ID::OK);
+        ASSERT_EQ(this->server->stop(), Error::ID::OK);
     }
 
-    std::shared_ptr<CommonAPI::Runtime> runtime; /**< Shared pointer to runtime. */
-    std::shared_ptr<AppStubImpl> server; /**< Server stub implementation. */
-    const std::string server_domain = "local"; /**< Server Common API C++ domain. */
-    const std::string server_instance = "commonapi.app.App"; /**< Server Common API C++ instance. */
-    const std::string server_connection = "server-sample"; /**< Server Common API C++ connection. */
-
-    std::shared_ptr<AppProxy<>> client; /**< Client proxy implementation. */
-    const std::string client_domain = "local"; /**< Client Common API C++ domain. */
-    const std::string client_instance = "commonapi.app.App"; /**< Client Common API C++ instance. */
-    const std::string client_connection = "client-sample"; /**< Client Common API C++ connection. */
+    std::shared_ptr<Capi::Client<Client::AppClient>> client; /**< Client. */
+    std::shared_ptr<Capi::Server<Server::AppService>> server; /**< Server. */
 };
 
-/** TODO: Run an example test. */
-TEST_F(AppTestFixture, First)
+/** Sends some data synchronously from the client to the server and evaluates the same data is received back. */
+TEST_F(AppTestFixture, SyncPing)
 {
-    ASSERT_EQ(Error::OK, Error::OK);
+    const std::string & request = "ping pong, ping pong...";
+    std::string response;
+
+    ASSERT_EQ(this->client->app->ping(request, response), Error::ID::OK);
+    ASSERT_EQ(request, response);
 }
 
-/** Run an example test. */
-TEST_F(AppTestFixture, Second)
-{
-    ASSERT_EQ(Error::OK, Error::OK);
-}
-
-/** Run an example test. */
-TEST_F(AppTestFixture, Third)
-{
-    ASSERT_EQ(Error::OK, Error::OK);
-}
-
-/** Run an example test. */
-TEST_F(AppTestFixture, Fourth)
-{
-    ASSERT_EQ(Error::OK, Error::OK);
-}
-
-// NOLINTEND(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor,
-// cppcoreguidelines-special-member-functions)
+// NOLINTEND(cppcoreguidelines-owning-memory,cppcoreguidelines-virtual-class-destructor)
 
 #if !defined(DOXYGEN)
 /**
