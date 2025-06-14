@@ -9,6 +9,10 @@ WORKDIR "/"
 # Ensure the active shell is PowerShell.
 SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
+# Ensure blank profiles exist for PowerShell and Bash terminals.
+RUN New-Item -Path "$($PROFILE.CurrentUserAllHosts)" -ItemType File -Force;                                            \
+    New-Item -Path "~/.bashrc" -ItemType File -Force;
+
 # Update package sources, upgrade current installed packages and install new packages. For details refer to:
 #   - https://packages.debian.org/index
 #   - https://manpages.debian.org/stretch/apt/apt-get.8.en.html
@@ -28,7 +32,7 @@ RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                   
     apt-get --assume-yes --show-progress install                                                                       \
     ## C/C++ / Debuggers / Build Packages ##############################################################################
     gcc=4:12.2.0-3                                                                                                     \
-    libc6-dev=2.36-9+deb12u9                                                                                           \
+    libc6-dev=2.36-9+deb12u10                                                                                           \
     gdb-multiarch=13.1-3                                                                                               \
     make=4.3-4.1                                                                                                       \
     ninja-build=1.11.1-2~deb12u1                                                                                       \
@@ -63,10 +67,10 @@ RUN 'Acquire::Retries "6";' > /etc/apt/apt.conf.d/80-retries;                   
     libboost-system1.81-dev=1.81.0-5+deb12u1                                                                           \
     libboost-thread1.81-dev=1.81.0-5+deb12u1                                                                           \
     libboost-fileSystem1.81-dev=1.81.0-5+deb12u1                                                                       \
-    libsystemd-dev=252.31-1~deb12u1                                                                                    \
+    libsystemd-dev=252.38-1~deb12u1                                                                                    \
                                                                                                                        \
     ## Other ###########################################################################################################
-    git=1:2.39.5-0+deb12u1                                                                                             \
+    git=1:2.39.5-0+deb12u2                                                                                             \
     wget                                                                                                               \
     xz-utils                                                                                                           \
     locales;                                                                                                           \
@@ -121,6 +125,10 @@ RUN Push-Location "/usr/venvs";                                                 
     poetry install --only main,dev --no-cache --no-interaction;                                                        \
     deactivate;                                                                                                        \
     Pop-Location;
+
+# Ensure the Python virtual environment is initialized automatically in PowerShell and Bash terminals.
+RUN echo ". /usr/venvs/development/bin/Activate.ps1" >> "$($PROFILE.CurrentUserAllHosts)";                             \
+    echo ". /usr/venvs/development/bin/activate" >> "~/.bashrc";
 
 # Export the path where the Python virtual environment is located as an environment variable.
 ENV VIRTUAL_ENV_PATH="/usr/venvs/development"

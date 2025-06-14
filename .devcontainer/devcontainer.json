@@ -40,24 +40,25 @@
 
             // Set the settings.
             "settings": {
-                // Define 'pwsh' profile for Linux enviroments, and allow to start terminals in VSCode from it.
-                // Start it with the Python virtual environment already activated.
+                // Define 'pwsh' and 'bash' profile for Linux enviroments, and allow to start terminals in VSCode from it.
+                // Start it with the Python virtual environment already activated, from the profile files for each terminal type.
                 "terminal.integrated.profiles.linux": {
                     "pwsh": {
                         "path": "/bin/pwsh",
-                        "icon": "terminal-powershell",
-                        "args": ["-NoExit", "-Command", "& /usr/venvs/development/bin/Activate.ps1"]
+                        "icon": "terminal-powershell"
                     },
-                    "sh": {
-                        "path": "/bin/sh"
+                    "bash": {
+                        "path": "/bin/bash",
+                        "icon": "terminal-bash"
                     },
-                    "bash": null,
+                    "sh": null,
                     "JavaScript Debug Terminal": null
                 },
-                // Set the default profile to 'sh' in Linux enviroments, so that debug and launch work as normal.
-                "terminal.integrated.defaultProfile.linux": "sh",
+                // Set the default profile to 'bash' in Linux enviroments.
+                "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.automationProfile.linux": {
-                    "path": "/bin/sh"
+                    "path": "/bin/bash",
+                    "icon": "terminal-bash"
                 }
             }
         }

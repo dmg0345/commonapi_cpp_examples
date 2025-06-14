@@ -24,7 +24,7 @@ services:
       - ../../!local/other-files/github/github.env
 
     # Override default command to an infinite loop, this causes things not to shut down when the process ends.
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    command: /bin/bash -c "while sleep 1000; do :; done"
 
 ## Volumes #############################################################################################################
 volumes:
